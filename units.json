@@ -1,0 +1,30 @@
+{
+  "vampires": [
+    {
+      "name": "Gangrel Warpack",
+      "strength": 3,
+      "toughness": 2,
+      "obscurity": 1
+    },
+    {
+      "name": "Nosferatu Stalkers",
+      "strength": 2,
+      "toughness": 3,
+      "obscurity": 3
+    }
+  ],
+  "humans": [
+    {
+      "name": "Peasant Mob",
+      "strength": 2,
+      "toughness": 2,
+      "revelation": 2
+    },
+    {
+      "name": "Inquisition Patrol",
+      "strength": 3,
+      "toughness": 2,
+      "revelation": 3
+    }
+  ]
+}

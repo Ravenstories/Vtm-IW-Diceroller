@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Unit Battle Simulator</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #1a1a1a;
+      color: #eee;
+      margin: 0;
+      padding: 2rem;
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 1rem;
+    }
+    .container {
+      display: flex;
+      justify-content: center;
+      gap: 2rem;
+      margin-bottom: 2rem;
+    }
+    .card {
+      background: #2a2a2a;
+      padding: 1rem;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+      flex: 1;
+      max-width: 300px;
+    }
+    label, select {
+      display: block;
+      margin-bottom: 0.5rem;
+      width: 100%;
+    }
+    button {
+      display: block;
+      margin: 1rem auto 0;
+      padding: 0.5rem 1rem;
+      background: #b30000;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    .results {
+      max-width: 800px;
+      margin: auto;
+      background: #333;
+      padding: 1rem;
+      border-radius: 8px;
+    }
+    hr {
+      border: 0;
+      height: 1px;
+      background: #555;
+      margin: 1rem 0;
+    }
+  </style>
+</head>
+<body>
+  <h1>Unit Battle Simulator</h1>
+
+  <div class="container">
+    <div class="card">
+      <label for="vampireUnit">Vampire Unit</label>
+      <select id="vampireUnit"></select>
+    </div>
+    <div class="card">
+      <label for="humanUnit">Human Unit</label>
+      <select id="humanUnit"></select>
+    </div>
+  </div>
+
+  <button onclick="startBattle()">Roll Dice</button>
+
+  <div class="results" id="results"></div>
+
+  <script src="battle.js"></script>
+</body>
+</html>
