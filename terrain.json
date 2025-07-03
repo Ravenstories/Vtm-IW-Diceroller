@@ -1,0 +1,6 @@
+[
+  { "id": "plains", "name": "Plains / Fields" },
+  { "id": "hills",   "name": "Hills" },
+  { "id": "forest",  "name": "Forest / Wild" },
+  { "id": "urban",   "name": "Urban / City / Fort" }
+]

@@ -1,79 +1,87 @@
-/* ---------- State ---------- */
+/* ---------- Globals ---------- */
 let unitTemplates = {};
+let terrains = [];
 let activeUnits = { vampires: [], humans: [] };
 const LS_KEY = 'vtm_roster';
 
-/* ---------- Init ---------- */
-document.addEventListener('DOMContentLoaded', () => {
-  fetch('units.json')
-    .then(r => r.json())
-    .then(json => {
-      unitTemplates = json;
-      loadRoster();
-      populateRecruitDropdowns();
-      renderRoster();
-    });
+/* ---------- Startup ---------- */
+document.addEventListener('DOMContentLoaded', async () => {
+  try{
+    unitTemplates = await fetch('units.json').then(r=>r.json());
+    terrains      = await fetch('terrain.json').then(r=>r.json());
+    loadRoster();
+    populateRecruitDropdowns();
+    populateTerrainSelect();
+    renderRoster();
+  }catch(e){
+    console.error('Init failed',e);
+  }
 });
 
-/* ---------- Recruit ---------- */
-function populateRecruitDropdowns() {
-  ['vampires', 'humans'].forEach(race => {
-    const sel = document.getElementById(race + 'Select');
-    sel.innerHTML = '';                           // reset
-    unitTemplates[race].forEach((u, i) => {
-      sel.add(new Option(u.name, i));
-    });
+/* ---------- Recruit Dropdowns ---------- */
+function populateRecruitDropdowns(){
+  ['vampires','humans'].forEach(r=>{
+    const sel=document.getElementById(r+'Select');
+    sel.innerHTML='';
+    unitTemplates[r].forEach((u,i)=>sel.add(new Option(u.name,i)));
   });
 }
-
-function addUnit(race) {
-  const idx = +document.getElementById(race + 'Select').value;
-  if (Number.isNaN(idx)) return;
-  const t = unitTemplates[race][idx];
-  activeUnits[race].push({ ...t, health: t.maxHealth });
-  saveRoster();
-  renderRoster();
+function populateTerrainSelect(){
+  const sel=document.getElementById('terrainSelect');
+  sel.innerHTML='';
+  terrains.forEach(t=>sel.add(new Option(t.name,t.id)));
 }
 
-/* ---------- Roster UI ---------- */
-function renderRoster() {
-  const pane = document.getElementById('rosterPane');
-  pane.innerHTML = '<h2>Active Roster</h2>';
+/* ---------- Roster Ops ---------- */
+function addUnit(race){
+  const idx=+document.getElementById(race+'Select').value;
+  if(Number.isNaN(idx)) return;
+  const t=unitTemplates[race][idx];
+  activeUnits[race].push({...t,health:t.maxHealth});
+  saveRoster(); renderRoster();
+}
+function adjHP(r,i,d){
+  const u=activeUnits[r][i];
+  u.health=Math.max(0,Math.min(u.maxHealth,u.health+d));
+  saveRoster(); renderRoster();
+}
+function remUnit(r,i){
+  activeUnits[r].splice(i,1);
+  saveRoster(); renderRoster();
+}
 
-  ['vampires', 'humans'].forEach(race => {
-    const sub = document.createElement('h3');
-    sub.textContent = race[0].toUpperCase() + race.slice(1);
+/* ---------- Roster Render ---------- */
+function renderRoster(){
+  const pane=document.getElementById('rosterPane');
+  pane.innerHTML='<h2>Active Roster</h2>';
+
+  ['vampires','humans'].forEach(r=>{
+    const sub=document.createElement('h3');
+    sub.textContent=r[0].toUpperCase()+r.slice(1);
     pane.appendChild(sub);
 
-    activeUnits[race].forEach((u, i) => {
-      const row = document.createElement('div');
-      row.className = 'roster-unit';
-
-      /* header line */
-      const head = document.createElement('div');
-      head.className = 'roster-head';
-      head.innerHTML = `
-        <span><strong>${u.name}</strong> (HP ${u.health}/${u.maxHealth})</span>
-        <span>
-          <button class="small" onclick="adjHP('${race}',${i},-1)">-</button>
-          <button class="small" onclick="adjHP('${race}',${i},1)">+</button>
-          <button class="small" onclick="remUnit('${race}',${i})">✖</button>
-        </span>`;
-      row.appendChild(head);
-
-      /* stat badges */
-      const badges = document.createElement('div');
-      badges.className = 'badges';
-      const statBadges = (race==='vampires')
-        ? [`P:${u.power}` , `T:${u.toughness}`, `O:${u.obscurity}`]
-        : [`P:${u.power}` , `T:${u.toughness}`, `R:${u.revelation}`];
-      statBadges.forEach(txt=>{
-        const b=document.createElement('span');b.className='badge';b.textContent=txt;badges.appendChild(b);
-      });
-
-      /* trait pills */
-      u.traits.forEach(tr=>{
-        const t=document.createElement('span');t.className='badge trait';t.textContent=tr;badges.appendChild(t);
+    activeUnits[r].forEach((u,i)=>{
+      const row=document.createElement('div');
+      row.className='roster-unit';
+      row.innerHTML=`
+        <div class="roster-head">
+          <span><strong>${u.name}</strong> (HP ${u.health}/${u.maxHealth})</span>
+          <span>
+            <button class="small" onclick="adjHP('${r}',${i},-1)">-</button>
+            <button class="small" onclick="adjHP('${r}',${i},1)">+</button>
+            <button class="small" onclick="remUnit('${r}',${i})">✖</button>
+          </span>
+        </div>`;
+      const badges=document.createElement('div');
+      badges.className='badges';
+      const stats=(r==='vampires')
+        ? ['P:'+u.power,'T:'+u.toughness,'O:'+u.obscurity]
+        : ['P:'+u.power,'T:'+u.toughness,'R:'+u.revelation];
+      [...stats,...u.traits].forEach(txt=>{
+        const b=document.createElement('span');
+        b.className='badge'+(u.traits.includes(txt)?' trait':'');
+        b.textContent=txt;
+        badges.appendChild(b);
       });
       row.appendChild(badges);
       pane.appendChild(row);
@@ -82,85 +90,62 @@ function renderRoster() {
   refreshCombatantSelects();
 }
 
-function adjHP(r,i,d){const u=activeUnits[r][i];u.health=Math.max(0,Math.min(u.maxHealth,u.health+d));saveRoster();renderRoster();}
-function remUnit(r,i){activeUnits[r].splice(i,1);saveRoster();renderRoster();}
-
-/* ---------- Battle ---------- */
-function refreshCombatantSelects() {
-  const vSel = document.getElementById('vampireActiveSelect');
-  const hSel = document.getElementById('humanActiveSelect');
-  vSel.innerHTML = ''; hSel.innerHTML = '';
+function refreshCombatantSelects(){
+  const vSel=document.getElementById('vampireActiveSelect');
+  const hSel=document.getElementById('humanActiveSelect');
+  vSel.innerHTML=''; hSel.innerHTML='';
   activeUnits.vampires.forEach((u,i)=>vSel.add(new Option(`${u.name} (HP ${u.health})`,i)));
-  activeUnits.humans  .forEach((u,i)=>hSel.add(new Option(`${u.name} (HP ${u.health})`,i)));
+  activeUnits.humans.forEach((u,i)=>hSel.add(new Option(`${u.name} (HP ${u.health})`,i)));
 }
 
-const succ = rolls => rolls.filter(x=>x>=6).length;
-const roll = n => Array.from({length:n},()=>Math.floor(Math.random()*10)+1);
+/* ---------- Battle ---------- */
+const roll=n=>Array.from({length:n},()=>Math.floor(Math.random()*10)+1);
+const succ=arr=>arr.filter(x=>x>=6).length;
+const cap=s=>s[0].toUpperCase()+s.slice(1);
 
 function applyTerrainMods(unit, terrain){
-  let bonus = { power:0, toughness:0, obscurity:0, revelation:0 };
-  unit.traits.forEach(tr=>{
-    switch(tr){
-      case 'Protean':
-        if(terrain==='forest'){ bonus.power+=1; bonus.obscurity+=2; }
-        break;
-      case 'Stone Sentinel':
-        if(terrain==='urban'){ bonus.toughness+=1; }
-        break;
-      case 'Social Chameleons':
-        if(terrain==='urban'){ bonus.obscurity+=3; }
-        break;
-      /* expand with more traits here */
+  const b={power:0,toughness:0,obscurity:0,revelation:0};
+  unit.traits.forEach(t=>{
+    switch(t){
+      case 'Protean': if(terrain==='forest'){b.power+=1;b.obscurity+=2;} break;
+      case 'Stone Sentinel': if(terrain==='urban'){b.toughness+=1;} break;
+      case 'Social Chameleons': if(terrain==='urban'){b.obscurity+=3;} break;
     }
   });
-  return bonus;
+  return b;
 }
 
 function startBattle(){
-  const vIdx = document.getElementById('vampireActiveSelect').value;
-  const hIdx = document.getElementById('humanActiveSelect').value;
+  const vIdx=document.getElementById('vampireActiveSelect').value;
+  const hIdx=document.getElementById('humanActiveSelect').value;
   if(vIdx===''||hIdx===''){alert('Pick fighters');return;}
-  const terrain = document.getElementById('terrainSelect').value;
+  const terrain=document.getElementById('terrainSelect').value;
 
-  const vamp = activeUnits.vampires[vIdx];
-  const hum  = activeUnits.humans[hIdx];
+  const vamp=activeUnits.vampires[vIdx];
+  const hum=activeUnits.humans[hIdx];
+  const vMod=applyTerrainMods(vamp,terrain);
+  const hMod=applyTerrainMods(hum,terrain);
 
-  const vMod = applyTerrainMods(vamp,terrain);
-  const hMod = applyTerrainMods(hum ,terrain);
-
-  const sections = [];
-
-  sections.push( duel(
-    {unit:vamp, stat:'power', bonus:vMod.power},
-    {unit:hum , stat:'toughness', bonus:hMod.toughness},
-    'Vampire Power vs Human Toughness' ));
-
-  sections.push( duel(
-    {unit:hum , stat:'power', bonus:hMod.power},
-    {unit:vamp, stat:'toughness', bonus:vMod.toughness},
-    'Human Power vs Vampire Toughness' ));
-
-  sections.push( duel(
-    {unit:vamp, stat:'obscurity', bonus:vMod.obscurity},
-    {unit:hum , stat:'revelation', bonus:hMod.revelation},
-    'Obscurity vs Revelation' ));
-
-  document.getElementById('results').innerHTML = sections.join('<hr>');
+  const sections=[
+    duel({u:vamp,stat:'power',bon:vMod.power},{u:hum,stat:'toughness',bon:hMod.toughness},'Vampire Power vs Human Toughness'),
+    duel({u:hum,stat:'power',bon:hMod.power},{u:vamp,stat:'toughness',bon:vMod.toughness},'Human Power vs Vampire Toughness'),
+    duel({u:vamp,stat:'obscurity',bon:vMod.obscurity},{u:hum,stat:'revelation',bon:hMod.revelation},'Obscurity vs Revelation')
+  ];
+  document.getElementById('results').innerHTML=sections.join('<hr>');
 }
 
 function duel(a,b,label){
-  const aVal = (a.unit[a.stat]||0)+a.bonus;
-  const bVal = (b.unit[b.stat]||0)+b.bonus;
-  const rA = roll(aVal); const rB = roll(bVal);
-  const sA = succ(rA);   const sB = succ(rB);
-  const winner = sA>sB? a.unit.name : sB>sA ? b.unit.name : 'Draw';
+  const aVal=(a.u[a.stat]||0)+a.bon;
+  const bVal=(b.u[b.stat]||0)+b.bon;
+  const rA=roll(aVal), rB=roll(bVal);
+  const sA=succ(rA), sB=succ(rB);
+  const win=sA>sB?a.u.name:sB>sA?b.u.name:'Draw';
   return `
     <h3>${label}</h3>
-    <p>${a.unit.name} (${cap(a.stat)}${a.bonus?`+${a.bonus}`:''}): ${rA.join(', ')} — <b>${sA}</b></p>
-    <p>${b.unit.name} (${cap(b.stat)}${b.bonus?`+${b.bonus}`:''}): ${rB.join(', ')} — <b>${sB}</b></p>
-    <strong>Winner: ${winner}</strong>`;
+    <p>${a.u.name} (${cap(a.stat)}${a.bon?`+${a.bon}`:''}): ${rA.join(', ')} — <b>${sA}</b></p>
+    <p>${b.u.name} (${cap(b.stat)}${b.bon?`+${b.bon}`:''}): ${rB.join(', ')} — <b>${sB}</b></p>
+    <strong>Winner: ${win}</strong>`;
 }
-const cap=s=>s[0].toUpperCase()+s.slice(1);
 
 /* ---------- Persistence ---------- */
 function saveRoster(){localStorage.setItem(LS_KEY,JSON.stringify(activeUnits));}
