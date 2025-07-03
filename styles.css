@@ -16,12 +16,7 @@ body{
 }
 
 /* ----- Layout ----- */
-#rosterPane{
-  width:320px;
-  background:#222;
-  padding:1rem;
-  overflow-y:auto;
-}
+
 
 .main{
   flex:1;
@@ -120,3 +115,23 @@ hr{
 
 /* highlight a trait that fired this round */
 .activeTrait { background:#d58400 !important; }
+
+#rosterPane{
+  resize: horizontal;
+  overflow: auto;
+  min-width: 200px;
+  max-width: 500px;
+}
+
+/* the vertical separator becomes a draggable “handle” */
+#vSep{
+  cursor: ew-resize;
+  width:4px;                 /* a bit thicker to grab */
+  background:#555;
+}
+
+/* ─── 2. Let every .card be resizable by the user ─── */
+.card{
+  resize: both;              /* drag corner to grow/shrink */
+  overflow: auto;            /* keeps scroll on inner content */
+}

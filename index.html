@@ -4,86 +4,118 @@
   <meta charset="UTF-8" />
   <title>Vampire vs Human Dice Roller</title>
 
-  <!-- External style + scripts -->
-  <link rel="stylesheet" href="styles.css" />
+  <!-- core styling + script -->
+  <link rel="stylesheet" href="styles.css">
   <script defer src="battle.js"></script>
 
-  <!-- Tiny page-specific tweaks -->
+  <!-- page-specific tweaks -->
   <style>
-    /* main column never wider than 900px */
-    .main      { max-width: 900px; margin-inline: auto; }
-    /* action cards stack at mobile width */
-    @media (max-width: 640px){
-      .flex { flex-direction: column; align-items: stretch; }
-    }
-    /* scrollable battle log */
-    #results   { max-height: 260px; overflow-y: auto; }
-    /* footer with download button */
-    footer     { text-align: center; padding: .8rem 0; font-size: .85rem; color:#888; }
-    footer a   { color: #bbb; text-decoration: underline; }
+    /* ─── Layout grid: fixed sidebar 300 px + flexible main ─── */
+    #app      { display:grid; grid-template-columns: 300px 1fr; height:100vh; }
+    aside     { overflow-y:auto; background:#222; }
+    main      { overflow-y:auto; padding:1.5rem; }
+    /* cards don’t stretch beyond 900 px, stay centred */
+    .limiter  { max-width:900px; margin-inline:auto; display:flex; flex-direction:column; gap:1.5rem; }
+    /* recruit panels align side-by-side until 700 px */
+    .recruit  { display:flex; gap:1rem; flex-wrap:wrap; justify-content:center; }
+
+    /* show thin separator only on large screens */
+    @media (max-width:800px){ #vSep{display:none;} }
+    #vSep     { position:fixed; left:300px; top:0; bottom:0; width:1px; background:#444; }
+
+    /* Log boxes — scroll independently */
+    #results, #history { max-height:260px; overflow-y:auto; }
   </style>
 </head>
 <body>
+  <div id="app">
+    <!-- Left sidebar = Roster -->
+    <aside id="rosterPane"></aside>
+    <div id="vSep"></div>
 
-  <!-- Fixed roster sidebar -->
-  <aside id="rosterPane"></aside>
+    <!-- Right scrolling column -->
+    <main>
+      <div class="limiter">
 
-  <!-- Scrollable main column -->
-  <div class="main">
+        <h1 style="text-align:center;margin-bottom:1rem">Vampire vs Human Dice Roller</h1>
 
-    <h1>Vampire vs Human Dice Roller</h1>
+        <!-- Recruit -->
+        <div class="recruit">
+          <div class="card" style="flex:1 1 260px">
+            <h2>Recruit Vampire</h2>
+            <select id="vampiresSelect"></select>
+            <button onclick="addUnit('vampires')">Add</button>
+          </div>
 
-    <!-- Recruit -->
-    <div class="flex">
-      <div class="card">
-        <h2>Recruit Vampire</h2>
-        <select id="vampiresSelect"></select>
-        <button onclick="addUnit('vampires')">Add</button>
-      </div>
+          <div class="card" style="flex:1 1 260px">
+            <h2>Recruit Human</h2>
+            <select id="humansSelect"></select>
+            <button onclick="addUnit('humans')">Add</button>
+          </div>
+        </div>
 
-      <div class="card">
-        <h2>Recruit Human</h2>
-        <select id="humansSelect"></select>
-        <button onclick="addUnit('humans')">Add</button>
-      </div>
-    </div>
+        <!-- Battle setup -->
+        <div class="card">
+          <h2>Choose Combatants</h2>
+          <div class="recruit" style="gap:.8rem">
+            <label>Vampire:
+              <select id="vampireActiveSelect" style="min-width:185px"></select>
+            </label>
+            <label>Human:
+              <select id="humanActiveSelect" style="min-width:185px"></select>
+            </label>
+            <label>Terrain:
+              <select id="terrainSelect"></select>
+            </label>
+          </div>
+          <button style="margin-top:1rem" onclick="startBattle()">Roll Dice!</button>
+        </div>
 
-    <!-- Battle setup -->
-    <div class="card" style="margin-top:1.2rem">
-      <h2>Choose Combatants</h2>
-      <div class="flex" style="gap:.8rem">
-        <label>Vampire:
-          <select id="vampireActiveSelect" style="min-width:185px"></select>
-        </label>
-        <label>Human:
-          <select id="humanActiveSelect" style="min-width:185px"></select>
-        </label>
-        <label>Terrain:
-          <select id="terrainSelect"></select>
-        </label>
-      </div>
-      <button style="margin-top:1rem" onclick="startBattle()">Roll Dice!</button>
-    </div>
+        <!-- Battle log -->
+        <div id="results" class="card"></div>
 
-    <!-- Battle log -->
-    <div id="results" class="card" style="margin-top:1.2rem"></div>
+        <!-- Trait reference -->
+        <div class="card">
+          <h2>Trait Reference</h2>
+          <div id="traitRef"></div>
+        </div>
 
-    <!-- Trait reference -->
-    <div class="card" style="margin-top:1.2rem">
-      <h2>Trait Reference</h2>
-      <div id="traitRef"></div>
-    </div>
+        <!-- History -->
+        <div class="card">
+          <h2>Battle History</h2>
+          <div id="history"></div>
+        </div>
 
-    <!-- History -->
-    <div class="card" style="margin-top:1.2rem">
-      <h2>Battle History</h2>
-      <div id="history"></div>
-    </div>
+        <footer style="text-align:center;font-size:.85rem;color:#888">
+          Made with 🦇 + ⚔️ — log is downloadable above.<br>
+          <a href="https://github.com/yourrepo" style="color:#bbb;text-decoration:underline">Source files</a>
+        </footer>
+      </div><!-- limiter -->
+          </main>
+  </div><!-- /app -->
+  <script>
+/* draggable vertical bar */
+document.addEventListener('DOMContentLoaded', () => {
+  const sep   = document.getElementById('vSep');
+  const aside = document.getElementById('rosterPane');
+  let dragging = false, startX = 0, startW = 0;
 
-    <footer>
-      Made with 🦇&nbsp;+&nbsp;⚔️ — download full log any time from the button above.<br>
-      Source files: <a href="https://github.com/yourrepo">GitHub</a>
-    </footer>
-  </div>
+  sep.addEventListener('mousedown', e => {
+    dragging = true;
+    startX   = e.clientX;
+    startW   = aside.getBoundingClientRect().width;
+    document.body.style.userSelect = 'none';
+  });
+  window.addEventListener('mousemove', e => {
+    if(!dragging) return;
+    const newW = Math.min(500, Math.max(200, startW + (e.clientX - startX)));
+    aside.style.width = newW + 'px';
+  });
+  window.addEventListener('mouseup', () => {
+    dragging = false;
+    document.body.style.userSelect = '';
+  });
+});
+</script>
 </body>
 </html>
