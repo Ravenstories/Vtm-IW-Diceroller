@@ -1,5 +1,5 @@
 // js/traitService.js
-import traits from '../data/traits.json' with { type: 'json' };
+import traits from '../../data/traits.json' with { type: 'json' };
 
 /**
  * Applies trait-based modifiers to a unit's stats based on context
