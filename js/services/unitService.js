@@ -1,5 +1,5 @@
 // js/unitService.js
-import units from '../data/units.json' assert { type: 'json' };
+import units from '../data/units.json' with { type: 'json' };
 
 export function getUnitByName(name) {
   const allUnits = [...units.vampires, ...units.humans];
