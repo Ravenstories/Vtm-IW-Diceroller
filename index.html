@@ -1,79 +1,54 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Vampire vs Human Dice Roller</title>
-  <link rel="stylesheet" href="assets/css/styles.css" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VtM IW Dice Roller</title>
+  <link rel="stylesheet" href="./assets/css/styles.css">
 </head>
 <body>
-  <div class="container">
-    <div id="rosterPane" class="sidebar">
-      <h2>Active Roster</h2>
-      <div id="activeVampires">
-        <h3>Vampires</h3>
-        <!-- Dynamic vampire list -->
+  <main>
+    <!-- Left: Roster -->
+    <div id="rosterPanel" class="panel">
+      <h2>Active Units</h2>
+      <div>
+        <select id="vampiresSelect"></select>
+        <button onclick="addUnit('vampires')">Add Vampire</button>
       </div>
-      <div id="activeHumans">
-        <h3>Humans</h3>
-        <!-- Dynamic human list -->
+      <div>
+        <select id="humansSelect"></select>
+        <button onclick="addUnit('humans')">Add Human</button>
+      </div>
+      <div id="rosters"></div>
+    </div>
+
+    <!-- Center: Controls -->
+    <div id="controlPanel" class="panel">
+      <h2>Battle Controls</h2>
+
+      <label for="terrainSelect">Terrain:</label>
+      <select id="terrainSelect"></select>
+
+      <div>
+        <h3>Select Combatants</h3>
+        <select id="vampireActiveSelect"></select>
+        <select id="humanActiveSelect"></select>
+        <button onclick="startBattle()">Battle!</button>
+      </div>
+
+      <div>
+        <h3>Trait Info</h3>
+        <ul id="traitList"></ul>
       </div>
     </div>
 
-    <div id="vSep"></div>
-
-    <div class="main">
-      <header>
-        <h1>Vampire vs Human Dice Roller</h1>
-        <div class="recruit-panel">
-          <div>
-            <label>Recruit Vampire</label>
-            <select id="vampireSelect"></select>
-            <button id="addVampire">Add</button>
-          </div>
-          <div>
-            <label>Recruit Human</label>
-            <select id="humanSelect"></select>
-            <button id="addHuman">Add</button>
-          </div>
-        </div>
-      </header>
-
-      <section class="combat-panel">
-        <h2>Choose Combatants</h2>
-        <label>Vampire:
-          <select id="vampireDropdown"></select>
-        </label>
-        <label>Human:
-          <select id="humanDropdown"></select>
-        </label>
-        <label>Terrain:
-          <select id="terrainDropdown"></select>
-        </label>
-        <button id="rollButton">Roll Dice!</button>
-      </section>
-
-      <section class="result-panel">
-        <div id="rollResults"></div>
-      </section>
-
-      <section class="trait-panel">
-        <h2>Trait Reference</h2>
-        <div id="traitReference"></div>
-      </section>
-
-      <section class="log-panel">
-        <h2>Battle History</h2>
-        <div id="log"></div>
-        <button id="downloadLog">Download log</button>
-      </section>
-
-      <footer>
-        <p>Made with 🦇 + ⚔️ — log is downloadable above. <a href="#">Source files</a></p>
-      </footer>
+    <!-- Right: Results -->
+    <div id="resultsPanel" class="panel">
+      <h2>Results</h2>
+      <div id="results"></div>
     </div>
-  </div>
+  </main>
 
-  <script src="battle.js"></script>
+  <script type="module" src="./js/main.js"></script>
 </body>
 </html>

@@ -1,58 +1,132 @@
 // js/main.js
+import units from '../data/units.json' assert { type: 'json' };
+import terrain from '../data/terrain.json' assert { type: 'json' };
+import traits from '../data/traits.json' assert { type: 'json' };
+import { getTerrainBonuses } from './services/traitService.js';
+import { logBattleResult } from './services/logger.js';
 
-import { loadJSON } from './core/dataService.js';
-import { initRosterUI } from './ui/rosterUI.js';
-import { initTraitUI } from './ui/traitUI.js';
-import { initLogUI, appendLog } from './ui/logUI.js';
-import { calculateBonuses } from './logic/bonusCalculator.js';
+let activeUnits = {
+  vampires: [],
+  humans: []
+};
 
-let vampireUnits = [], humanUnits = [], traits = {}, terrain = [];
-
-async function initApp() {
-  [vampireUnits, humanUnits, traits, terrain] = await Promise.all([
-    loadJSON('./data/vampires.json'),
-    loadJSON('./data/humans.json'),
-    loadJSON('./data/traits.json'),
-    loadJSON('./data/terrain.json')
-  ]);
-
-  initRosterUI(vampireUnits, humanUnits);
-  initTraitUI(traits);
-  initLogUI();
-
-  setupBattleRoll();
+function populateSelect(id, options) {
+  const sel = document.getElementById(id);
+  sel.innerHTML = '';
+  options.forEach((opt, idx) => sel.add(new Option(opt.name, idx)));
 }
 
-function setupBattleRoll() {
-  const rollBtn = document.getElementById('roll-btn');
-  rollBtn.addEventListener('click', () => {
-    const vampire = getSelectedUnit('vampire');
-    const human = getSelectedUnit('human');
-    const terrainType = document.getElementById('terrain-select').value;
+function renderRosters() {
+  const root = document.getElementById('rosters');
+  root.innerHTML = '';
+  ['vampires', 'humans'].forEach(race => {
+    const block = document.createElement('div');
+    block.innerHTML = `<h3>${race.toUpperCase()}</h3>`;
+    activeUnits[race].forEach((u, i) => {
+      const row = document.createElement('div');
+      row.className = 'roster-unit';
+      row.innerHTML = `
+        <span><strong>${u.name}</strong> (${u.health}/${u.maxHealth})</span>
+        <span>
+          <button onclick="adjustHealth('${race}',${i},-1)">-</button>
+          <button onclick="adjustHealth('${race}',${i},1)">+</button>
+          <button onclick="removeUnit('${race}',${i})">x</button>
+        </span>`;
+      block.appendChild(row);
+    });
+    root.appendChild(block);
+  });
+  updateActiveSelects();
+}
 
-    const vampireBonus = calculateBonuses(vampire, terrainType, traits);
-    const humanBonus = calculateBonuses(human, terrainType, traits);
-
-    const vampirePower = vampire.P + vampireBonus.power;
-    const humanToughness = human.T + humanBonus.toughness;
-
-    const result = compareDiceRolls(vampirePower, humanToughness);
-    appendLog(vampire, human, vampireBonus, humanBonus, terrainType, result);
+function updateActiveSelects() {
+  ['vampires', 'humans'].forEach(race => {
+    const sel = document.getElementById(race.slice(0, -1) + 'ActiveSelect');
+    sel.innerHTML = '';
+    activeUnits[race].forEach((u, i) => sel.add(new Option(`${u.name} (${u.health})`, i)));
   });
 }
 
-function getSelectedUnit(type) {
-  const select = document.getElementById(`${type}-select`);
-  const value = select.value;
-  const [name, hp] = value.split(' (HP ');
-  const list = type === 'vampire' ? vampireUnits : humanUnits;
-  return list.find(u => u.name === name.trim());
+function adjustHealth(race, i, delta) {
+  activeUnits[race][i].health = Math.max(0, Math.min(activeUnits[race][i].maxHealth, activeUnits[race][i].health + delta));
+  renderRosters();
 }
 
-function compareDiceRolls(power, toughness) {
-  const roll = () => Array.from({ length: power }, () => Math.ceil(Math.random() * 10)).filter(x => x >= 6).length;
-  const result = roll() - Array.from({ length: toughness }, () => Math.ceil(Math.random() * 10)).filter(x => x >= 6).length;
-  return result > 0 ? 'Vampire' : result < 0 ? 'Human' : 'Draw';
+function removeUnit(race, i) {
+  activeUnits[race].splice(i, 1);
+  renderRosters();
 }
 
-initApp();
+function addUnit(race) {
+  const sel = document.getElementById(`${race}Select`);
+  const unit = JSON.parse(JSON.stringify(units[race][sel.value]));
+  unit.health = unit.maxHealth;
+  activeUnits[race].push(unit);
+  renderRosters();
+}
+
+function populateTerrainSelect() {
+  const sel = document.getElementById('terrainSelect');
+  terrain.forEach(t => sel.add(new Option(t.name, t.key)));
+}
+
+function startBattle() {
+  const v = activeUnits.vampires[document.getElementById('vampireActiveSelect').value];
+  const h = activeUnits.humans[document.getElementById('humanActiveSelect').value];
+  const t = document.getElementById('terrainSelect').value;
+  if (!v || !h || !t) return alert('Choose terrain and units');
+
+  const bonuses = getTerrainBonuses(v, h, t, traits);
+
+  const stats = {
+    vampire: {
+      power: v.power + (bonuses.vampire.power || 0),
+      toughness: v.toughness + (bonuses.vampire.toughness || 0),
+      obscurity: v.obscurity + (bonuses.vampire.obscurity || 0),
+      activeTraits: bonuses.vampire.activeTraits || []
+    },
+    human: {
+      power: h.power + (bonuses.human.power || 0),
+      toughness: h.toughness + (bonuses.human.toughness || 0),
+      revelation: h.revelation + (bonuses.human.revelation || 0),
+      activeTraits: bonuses.human.activeTraits || []
+    }
+  };
+
+  const result = resolveBattle(stats);
+  logBattleResult(v, h, t, stats, result);
+}
+
+function resolveBattle(stats) {
+  const roll = n => Array.from({ length: n }, () => Math.floor(Math.random() * 10) + 1);
+  const suc = r => r.filter(n => n >= 6).length;
+
+  const vampPow = suc(roll(stats.vampire.power));
+  const humTgh = suc(roll(stats.human.toughness));
+  const humPow = suc(roll(stats.human.power));
+  const vampTgh = suc(roll(stats.vampire.toughness));
+  const vampObs = suc(roll(stats.vampire.obscurity));
+  const humRev = suc(roll(stats.human.revelation));
+
+  const score = [vampPow > humTgh, humPow > vampTgh, vampObs > humRev];
+  const winCount = score.filter(Boolean).length;
+  const winner = winCount >= 2 ? 'Vampires' : 'Humans';
+
+  return {
+    winner,
+    reason: `${vampPow}vP vs ${humTgh}hT, ${humPow}hP vs ${vampTgh}vT, ${vampObs}vO vs ${humRev}hR`
+  };
+}
+
+// Init
+window.addUnit = addUnit;
+window.adjustHealth = adjustHealth;
+window.removeUnit = removeUnit;
+window.startBattle = startBattle;
+
+document.addEventListener('DOMContentLoaded', () => {
+  populateSelect('vampiresSelect', units.vampires);
+  populateSelect('humansSelect', units.humans);
+  populateTerrainSelect();
+  renderRosters();
+});
