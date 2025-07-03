@@ -7,7 +7,8 @@
       "toughness": 2,
       "obscurity": 1,
       "traits": ["Protean"],
-      "maxHealth": 4
+      "maxHealth": 4,
+      "tags": ["Vampire"]
     },
     {
       "name": "Beast pack",
@@ -16,7 +17,8 @@
       "toughness": 1,
       "obscurity": 3,
       "traits": ["Animal", "Self-sustaining"],
-      "maxHealth": 3
+      "maxHealth": 3,
+      "tags": ["Animal"]
     },
     {
       "name": "Ravnos Troublemakers",
@@ -25,7 +27,8 @@
       "toughness": 2,
       "obscurity": 2,
       "traits": ["Sabotage", "Scout"],
-      "maxHealth": 2
+      "maxHealth": 2,
+      "tags": ["Vampire"]
     },
     {
       "name": "Tremere Magisters",
@@ -34,7 +37,8 @@
       "toughness": 1,
       "obscurity": 2,
       "traits": ["Seer Ritual"],
-      "maxHealth": 2
+      "maxHealth": 2,
+      "tags": ["Vampire"]
     },
     {
       "name": "Gargoyle Guardian",
@@ -43,7 +47,8 @@
       "toughness": 3,
       "obscurity": 0,
       "traits": ["Stone Sentinel", "Self-sustaining"],
-      "maxHealth": 4
+      "maxHealth": 4,
+      "tags": ["Gargoyle"]
     },
     {
       "name": "Assimite Mercenaries",
@@ -52,7 +57,8 @@
       "toughness": 3,
       "obscurity": 5,
       "traits": ["Blood Money"],
-      "maxHealth": 4
+      "maxHealth": 4,
+      "tags": ["Vampire"]
     },
     {
       "name": "Toreador Agents",
@@ -61,7 +67,8 @@
       "toughness": 2,
       "obscurity": 2,
       "traits": ["Social Chameleons", "Cover Story", "Herd"],
-      "maxHealth": 3
+      "maxHealth": 3,
+      "tags": ["Vampire"]
     },
     {
       "name": "Malkavian Seers",
@@ -70,7 +77,8 @@
       "toughness": 1,
       "obscurity": 3,
       "traits": ["Premonition", "Scout"],
-      "maxHealth": 2
+      "maxHealth": 2,
+      "tags": ["Vampire"]
     },
     {
       "name": "Salubri Healers",
@@ -79,7 +87,8 @@
       "toughness": 2,
       "obscurity": 4,
       "traits": ["Red Salve"],
-      "maxHealth": 2
+      "maxHealth": 2,
+      "tags": ["Vampire"]
     },
     {
       "name": "Ventrue Knights",
@@ -88,7 +97,8 @@
       "toughness": 4,
       "obscurity": 3,
       "traits": ["Command Authority"],
-      "maxHealth": 4
+      "maxHealth": 4,
+      "tags": ["Vampire"]
     },
     {
       "name": "Brujah Guardians",
@@ -97,7 +107,8 @@
       "toughness": 3,
       "obscurity": 2,
       "traits": ["Iron Will"],
-      "maxHealth": 4
+      "maxHealth": 4,
+      "tags": ["Vampire"]
     },
     {
       "name": "Nosferatu Spies",
@@ -106,7 +117,8 @@
       "toughness": 1,
       "obscurity": 3,
       "traits": ["Obfuscate"],
-      "maxHealth": 4
+      "maxHealth": 4,
+      "tags": ["Vampire"]
     }
   ],
   "humans": [
@@ -116,7 +128,8 @@
       "toughness": 2,
       "revelation": 1,
       "traits": ["Courageous"],
-      "maxHealth": 2
+      "maxHealth": 2,
+      "tags": ["Human"]
     },
     {
       "name": "Human Civilian",
@@ -124,7 +137,8 @@
       "toughness": 1,
       "revelation": 2,
       "traits": ["Innocent"],
-      "maxHealth": 1
+      "maxHealth": 1,
+      "tags": ["Human", "Peasant"]
     },
     {
       "name": "Human Scout",
