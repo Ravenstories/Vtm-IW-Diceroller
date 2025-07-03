@@ -1,22 +1,32 @@
 /* ---------- Globals ---------- */
+const JsonPath = "Json-Files/";
 let unitTemplates = {};
 let terrains = [];
+let traitList = [];
 let activeUnits = { vampires: [], humans: [] };
 const LS_KEY = 'vtm_roster';
 
 /* ---------- Startup ---------- */
 document.addEventListener('DOMContentLoaded', async () => {
   try{
-    unitTemplates = await fetch('units.json').then(r=>r.json());
-    terrains      = await fetch('terrain.json').then(r=>r.json());
+    unitTemplates = await fetch(JsonPath+'units.json').then(r=>r.json());
+    terrains      = await fetch(JsonPath+'terrain.json').then(r=>r.json());
+    traitList     = await fetch(JsonPath+'traits.json').then(r=>r.json());
     loadRoster();
     populateRecruitDropdowns();
     populateTerrainSelect();
     renderRoster();
+    renderTraitReference();
   }catch(e){
     console.error('Init failed',e);
   }
 });
+
+/* ---------- Helpers ---------- */
+const findTrait = id => traitList.find(t => t.id === id) || null;
+const roll = n => Array.from({length:n},()=>Math.floor(Math.random()*10)+1);
+const succ = arr => arr.filter(x=>x>=6).length;
+const cap = s => s[0].toUpperCase()+s.slice(1);
 
 /* ---------- Recruit Dropdowns ---------- */
 function populateRecruitDropdowns(){
@@ -32,7 +42,7 @@ function populateTerrainSelect(){
   terrains.forEach(t=>sel.add(new Option(t.name,t.id)));
 }
 
-/* ---------- Roster Ops ---------- */
+/* ---------- Roster Operations ---------- */
 function addUnit(race){
   const idx=+document.getElementById(race+'Select').value;
   if(Number.isNaN(idx)) return;
@@ -77,10 +87,16 @@ function renderRoster(){
       const stats=(r==='vampires')
         ? ['P:'+u.power,'T:'+u.toughness,'O:'+u.obscurity]
         : ['P:'+u.power,'T:'+u.toughness,'R:'+u.revelation];
-      [...stats,...u.traits].forEach(txt=>{
+      stats.forEach(txt=>{
         const b=document.createElement('span');
-        b.className='badge'+(u.traits.includes(txt)?' trait':'');
+        b.className='badge';
         b.textContent=txt;
+        badges.appendChild(b);
+      });
+      u.traits.forEach(tr=>{
+        const b=document.createElement('span');
+        b.className='badge trait';
+        b.textContent=tr;
         badges.appendChild(b);
       });
       row.appendChild(badges);
@@ -90,6 +106,7 @@ function renderRoster(){
   refreshCombatantSelects();
 }
 
+/* ---------- Combatant Selects ---------- */
 function refreshCombatantSelects(){
   const vSel=document.getElementById('vampireActiveSelect');
   const hSel=document.getElementById('humanActiveSelect');
@@ -98,23 +115,39 @@ function refreshCombatantSelects(){
   activeUnits.humans.forEach((u,i)=>hSel.add(new Option(`${u.name} (HP ${u.health})`,i)));
 }
 
-/* ---------- Battle ---------- */
-const roll=n=>Array.from({length:n},()=>Math.floor(Math.random()*10)+1);
-const succ=arr=>arr.filter(x=>x>=6).length;
-const cap=s=>s[0].toUpperCase()+s.slice(1);
-
-function applyTerrainMods(unit, terrain){
-  const b={power:0,toughness:0,obscurity:0,revelation:0};
-  unit.traits.forEach(t=>{
-    switch(t){
-      case 'Protean': if(terrain==='forest'){b.power+=1;b.obscurity+=2;} break;
-      case 'Stone Sentinel': if(terrain==='urban'){b.toughness+=1;} break;
-      case 'Social Chameleons': if(terrain==='urban'){b.obscurity+=3;} break;
+/* ---------- Trait Reference ---------- */
+function renderTraitReference(){
+  const ref=document.getElementById('traitRef');
+  if(!ref) return;
+  const groups={passive:[],action:[]};
+  traitList.forEach(t=>groups[t.type].push(t));
+  ref.innerHTML='';
+  ['passive','action'].forEach(type=>{
+    if(groups[type].length){
+      const h=document.createElement('h3');h.textContent=cap(type)+' Traits';ref.appendChild(h);
+      groups[type].forEach(t=>{
+        const p=document.createElement('p');
+        p.innerHTML=`<strong>${t.id}:</strong> ${t.description}`;
+        ref.appendChild(p);
+      });
     }
   });
-  return b;
 }
 
+/* ---------- Terrain Mods ---------- */
+function applyTerrainMods(unit, terrain){
+  const totals={power:0,toughness:0,obscurity:0,revelation:0};
+  unit.traits.forEach(tr=>{
+    const data=findTrait(tr);
+    if(data && data.terrainMods && data.terrainMods[terrain]){
+      const mods=data.terrainMods[terrain];
+      Object.keys(mods).forEach(stat=>{ totals[stat]=(totals[stat]||0)+mods[stat]; });
+    }
+  });
+  return totals;
+}
+
+/* ---------- Battle ---------- */
 function startBattle(){
   const vIdx=document.getElementById('vampireActiveSelect').value;
   const hIdx=document.getElementById('humanActiveSelect').value;
@@ -127,21 +160,21 @@ function startBattle(){
   const hMod=applyTerrainMods(hum,terrain);
 
   const sections=[
-    duel({u:vamp,stat:'power',bon:vMod.power},{u:hum,stat:'toughness',bon:hMod.toughness},'Vampire Power vs Human Toughness'),
-    duel({u:hum,stat:'power',bon:hMod.power},{u:vamp,stat:'toughness',bon:vMod.toughness},'Human Power vs Vampire Toughness'),
-    duel({u:vamp,stat:'obscurity',bon:vMod.obscurity},{u:hum,stat:'revelation',bon:hMod.revelation},'Obscurity vs Revelation')
+    duel({u:vamp,stat:'power',bon:vMod.power},{u:hum,stat:'toughness',bon:hMod.toughness},'Vampire Power vs Human Toughness',terrain),
+    duel({u:hum,stat:'power',bon:hMod.power},{u:vamp,stat:'toughness',bon:vMod.toughness},'Human Power vs Vampire Toughness',terrain),
+    duel({u:vamp,stat:'obscurity',bon:vMod.obscurity},{u:hum,stat:'revelation',bon:hMod.revelation},'Obscurity vs Revelation',terrain)
   ];
   document.getElementById('results').innerHTML=sections.join('<hr>');
 }
 
-function duel(a,b,label){
+function duel(a,b,label,terrain){
   const aVal=(a.u[a.stat]||0)+a.bon;
   const bVal=(b.u[b.stat]||0)+b.bon;
   const rA=roll(aVal), rB=roll(bVal);
   const sA=succ(rA), sB=succ(rB);
   const win=sA>sB?a.u.name:sB>sA?b.u.name:'Draw';
   return `
-    <h3>${label}</h3>
+    <h3>${label} (${terrain})</h3>
     <p>${a.u.name} (${cap(a.stat)}${a.bon?`+${a.bon}`:''}): ${rA.join(', ')} — <b>${sA}</b></p>
     <p>${b.u.name} (${cap(b.stat)}${b.bon?`+${b.bon}`:''}): ${rB.join(', ')} — <b>${sB}</b></p>
     <strong>Winner: ${win}</strong>`;

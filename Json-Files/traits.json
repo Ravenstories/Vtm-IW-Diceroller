@@ -1,0 +1,97 @@
+[
+  {
+    "id": "Protean",
+    "type": "passive",
+    "description": "+1 Power and +2 Obscurity in forests or wild hexes",
+    "terrainMods": { "forest": { "power": 1, "obscurity": 2 } }
+  },
+  {
+    "id": "Obtenebration",
+    "type": "passive",
+    "description": "+1 Power in urban or shadowed hexes",
+    "terrainMods": { "urban": { "power": 1 } }
+  },
+  {
+    "id": "Iron Will",
+    "type": "passive",
+    "description": "Can’t retreat."
+  },
+  {
+    "id": "Stone Sentinel",
+    "type": "passive",
+    "description": "+1 Toughness fighting in urban hexes. -1 Movement. Can’t activate events.",
+    "terrainMods": { "urban": { "toughness": 1 } }
+  },
+  {
+    "id": "Cover Story",
+    "type": "passive",
+    "description": "Prevent 1 Masquerade loss from an adjacent battle"
+  },
+  {
+    "id": "Premonition",
+    "type": "passive",
+    "description": "Scout 2 from an allied unit not of your choosing."
+  },
+  {
+    "id": "Self-Sustaining",
+    "type": "passive",
+    "description": "Does not require upkeep."
+  },
+  {
+    "id": "Animal",
+    "type": "passive",
+    "description": "+1 Movement, -1 Obscurity when attacking an urban hex. Can’t activate events.",
+    "terrainMods": { "urban": { "obscurity": -1 } }
+  },
+  {
+    "id": "Obfuscate",
+    "type": "passive",
+    "description": "Unit will remain invisible unless ordered to attack during a move action."
+  },
+  {
+    "id": "Scout",
+    "type": "passive",
+    "description": "Reveal enemies in adjacent hexes"
+  },
+  {
+    "id": "Social Chameleons",
+    "type": "passive",
+    "description": "+3 Obscurity in urban hexes",
+    "terrainMods": { "urban": { "obscurity": 3 } }
+  },
+  {
+    "id": "Herd",
+    "type": "passive",
+    "description": "If unit is on an urban field, use 1 action to add 2 blood to the blood pool."
+  },
+  {
+    "id": "Celerity",
+    "type": "passive",
+    "description": "+1 Movement"
+  },
+  {
+    "id": "Command Authority",
+    "type": "passive",
+    "description": "+2 Power against peasant units"
+  },
+  {
+    "id": "Blood Money",
+    "type": "passive",
+    "description": "Unit costs an additional blood to activate."
+  },
+  {
+    "id": "Sabotage",
+    "type": "action",
+    "description": "Use 1 action to give enemy unit -2 to all stats for the rest of the turn."
+  },
+  {
+    "id": "Red Salve",
+    "type": "action",
+    "description": "Use 1 action to heal 2 Health of an adjacent unit."
+  },
+  {
+    "id": "Seer Ritual",
+    "type": "action",
+    "description": "Use 1 action and 1 blood to see any one square on the map for the rest of the turn."
+  }
+]
