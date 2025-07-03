@@ -47,3 +47,29 @@ export function getTraitModifiers(unit, context) {
 export function getTraitDescription(traitName) {
   return traits[traitName]?.description || '';
 }
+
+/**
+ * Extracts terrain-based modifiers from a unit's traits
+ * Used independently of battle context
+ * @param {Object} unit
+ * @param {string} terrain
+ * @returns {Object} { power, toughness, obscurity }
+ */
+export function getTerrainBonuses(unit, terrain) {
+  let bonuses = { power: 0, toughness: 0, obscurity: 0 };
+
+  unit.traits?.forEach(traitName => {
+    const trait = traits[traitName];
+    if (!trait || !trait.effects) return;
+
+    trait.effects.forEach(effect => {
+      if (effect.trigger.type === 'terrain' && effect.trigger.value.includes(terrain)) {
+        for (let [stat, value] of Object.entries(effect.modifiers)) {
+          if (bonuses[stat] != null) bonuses[stat] += value;
+        }
+      }
+    });
+  });
+
+  return bonuses;
+}
