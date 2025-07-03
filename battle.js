@@ -1,68 +1,137 @@
-let unitTemplates = {};
-let activeUnits = {
-  vampires: [],
-  humans: []
-};
+/* ---------- State ---------- */
+let unitTemplates = {};            // loaded from units.json
+let activeUnits = { vampires: [], humans: [] };
+const LS_KEY = 'vtm_roster';
 
-fetch('units.json')
-  .then(res => res.json())
-  .then(data => {
-    unitTemplates = data;
-    populateRaceDropdowns();
-  });
-
-function populateRaceDropdowns() {
-  const races = Object.keys(unitTemplates);
-  races.forEach(race => {
-    const select = document.getElementById(race + "Unit");
-    unitTemplates[race].forEach((unit, i) => {
-      const option = new Option(unit.name, i);
-      select.add(option);
+/* ---------- Initial Load ---------- */
+document.addEventListener('DOMContentLoaded', () => {
+  fetch('units.json')
+    .then(r => r.json())
+    .then(json => {
+      unitTemplates = json;
+      loadRoster();
+      populateRecruitDropdowns();
+      renderActiveUnits();
     });
+});
+
+/* ---------- Recruit & Roster ---------- */
+function populateRecruitDropdowns() {
+  ['vampires', 'humans'].forEach(race => {
+    const sel = document.getElementById(race + 'Select');
+    sel.innerHTML = '';
+    unitTemplates[race].forEach((u, i) => sel.add(new Option(u.name, i)));
   });
-  renderActiveUnits();
 }
 
 function addUnit(race) {
-  const selectedIndex = document.getElementById(race + "Unit").value;
-  const template = unitTemplates[race][selectedIndex];
-  const unit = {
-    ...template,
-    health: template.maxHealth
-  };
-  activeUnits[race].push(unit);
+  const idx = +document.getElementById(race + 'Select').value;
+  if (Number.isNaN(idx)) return;
+  const temp = unitTemplates[race][idx];
+  activeUnits[race].push({ ...temp, health: temp.maxHealth });
+  saveRoster();
   renderActiveUnits();
 }
 
-function adjustHealth(race, index, delta) {
-  activeUnits[race][index].health = Math.max(0, activeUnits[race][index].health + delta);
+function removeUnit(race, i) {
+  activeUnits[race].splice(i, 1);
+  saveRoster();
   renderActiveUnits();
 }
 
-function removeUnit(race, index) {
-  activeUnits[race].splice(index, 1);
+function adjustHealth(race, i, delta) {
+  const u = activeUnits[race][i];
+  u.health = Math.max(0, Math.min(u.maxHealth, u.health + delta));
+  saveRoster();
   renderActiveUnits();
 }
 
+/* ---------- Rendering ---------- */
 function renderActiveUnits() {
-  const container = document.getElementById("activeRoster");
-  container.innerHTML = "";
+  const wrap = document.getElementById('activeRoster');
+  wrap.innerHTML = '';
 
-  Object.entries(activeUnits).forEach(([race, units]) => {
-    const title = document.createElement("h3");
-    title.textContent = race.charAt(0).toUpperCase() + race.slice(1);
-    container.appendChild(title);
+  ['vampires', 'humans'].forEach(race => {
+    const title = document.createElement('h2');
+    title.textContent = race[0].toUpperCase() + race.slice(1) + ' Roster';
+    wrap.appendChild(title);
 
-    units.forEach((unit, i) => {
-      const div = document.createElement("div");
-      div.innerHTML = `
-        <strong>${unit.name}</strong> 
-        (${unit.health}/${unit.maxHealth}) 
-        <button onclick="adjustHealth('${race}', ${i}, -1)">-</button>
-        <button onclick="adjustHealth('${race}', ${i}, 1)">+</button>
-        <button onclick="removeUnit('${race}', ${i})">Remove</button>
-      `;
-      container.appendChild(div);
+    activeUnits[race].forEach((u, i) => {
+      const row = document.createElement('div');
+      row.className = 'roster-unit';
+      row.innerHTML = `
+        <span><strong>${u.name}</strong> (HP ${u.health}/${u.maxHealth})</span>
+        <span>
+          <button onclick="adjustHealth('${race}',${i},-1)">-</button>
+          <button onclick="adjustHealth('${race}',${i},1)">+</button>
+          <button onclick="removeUnit('${race}',${i})">✖</button>
+        </span>`;
+      wrap.appendChild(row);
     });
   });
+
+  updateCombatantSelects();
+}
+
+function updateCombatantSelects() {
+  const vSel = document.getElementById('vampireActiveSelect');
+  const hSel = document.getElementById('humanActiveSelect');
+  [vSel, hSel].forEach(sel => (sel.innerHTML = ''));
+
+  activeUnits.vampires.forEach((u, i) =>
+    vSel.add(new Option(`${u.name} (HP ${u.health})`, i))
+  );
+  activeUnits.humans.forEach((u, i) =>
+    hSel.add(new Option(`${u.name} (HP ${u.health})`, i))
+  );
+}
+
+/* ---------- Battle Logic ---------- */
+function rollDice(n) {
+  return Array.from({ length: n }, () => Math.floor(Math.random() * 10) + 1);
+}
+const successes = rolls => rolls.filter(r => r >= 6).length;
+
+function duel(att, attStat, def, defStat, label) {
+  const rA = rollDice(att[attStat] || 0);
+  const rD = rollDice(def[defStat] || 0);
+  const sA = successes(rA);
+  const sD = successes(rD);
+  const winner = sA > sD ? att.name : sD > sA ? def.name : 'Draw';
+  return `
+    <h3>${label}</h3>
+    <p>${att.name} (${capitalize(attStat)}): ${rA.join(', ')} — <b>${sA}</b></p>
+    <p>${def.name} (${capitalize(defStat)}): ${rD.join(', ')} — <b>${sD}</b></p>
+    <strong>Winner: ${winner}</strong>`;
+}
+
+function startBattle() {
+  const vIdx = document.getElementById('vampireActiveSelect').value;
+  const hIdx = document.getElementById('humanActiveSelect').value;
+  if (vIdx === '' || hIdx === '') {
+    alert('Pick one active Vampire and one active Human.');
+    return;
+  }
+  const vamp = activeUnits.vampires[vIdx];
+  const human = activeUnits.humans[hIdx];
+
+  const out = [
+    duel(vamp, 'power', human, 'toughness', 'Vampire Power vs Human Toughness'),
+    duel(human, 'power', vamp, 'toughness', 'Human Power vs Vampire Toughness'),
+    duel(vamp, 'obscurity', human, 'revelation', 'Obscurity vs Revelation')
+  ];
+  document.getElementById('results').innerHTML = out.join('<hr>');
+}
+
+const capitalize = str => str[0].toUpperCase() + str.slice(1);
+
+/* ---------- Persistence ---------- */
+function saveRoster() {
+  localStorage.setItem(LS_KEY, JSON.stringify(activeUnits));
+}
+function loadRoster() {
+  const data = localStorage.getItem(LS_KEY);
+  if (data) {
+    try { activeUnits = JSON.parse(data); } catch { /* ignore */ }
+  }
 }

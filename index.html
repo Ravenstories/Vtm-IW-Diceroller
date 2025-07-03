@@ -1,79 +1,91 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Vampire Unit Battle Simulator</title>
+  <title>VtM – Battle & Roster</title>
   <style>
-    body {
+    body{
       font-family: 'Segoe UI', sans-serif;
-      background: #1a1a1a;
-      color: #eee;
-      margin: 0;
-      padding: 2rem;
+      background:#1a1a1a;
+      color:#eee;
+      margin:0;
+      padding:2rem;
     }
-    h1 {
-      text-align: center;
-      margin-bottom: 1rem;
+    h1{text-align:center;margin-bottom:1rem;}
+    .flex{display:flex;gap:2rem;flex-wrap:wrap;justify-content:center;}
+    .card{
+      background:#2a2a2a;
+      padding:1rem;
+      border-radius:8px;
+      box-shadow:0 2px 8px rgba(0,0,0,.4);
+      max-width:300px;
+      flex:1 1 260px;
     }
-    .container {
-      display: flex;
-      justify-content: center;
-      gap: 2rem;
-      margin-bottom: 2rem;
+    label,select{display:block;margin-bottom:.5rem;width:100%;}
+    button{
+      margin:.5rem 0;
+      padding:.4rem .8rem;
+      background:#b30000;
+      color:#fff;
+      border:none;
+      border-radius:4px;
+      cursor:pointer;
     }
-    .card {
-      background: #2a2a2a;
-      padding: 1rem;
-      border-radius: 8px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.4);
-      flex: 1;
-      max-width: 300px;
+    #activeRoster{
+      margin-top:2rem;
     }
-    label, select {
-      display: block;
-      margin-bottom: 0.5rem;
-      width: 100%;
+    .roster-unit{
+      background:#444;
+      border-radius:4px;
+      padding:.3rem .6rem;
+      margin:.3rem 0;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:.3rem;
+      flex-wrap:wrap;
     }
-    button {
-      display: block;
-      margin: 1rem auto 0;
-      padding: 0.5rem 1rem;
-      background: #b30000;
-      color: white;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
+    .roster-unit small{opacity:.7;}
+    .battle-bar{
+      margin:2rem auto;
+      max-width:800px;
+      background:#333;
+      padding:1rem;
+      border-radius:8px;
+      text-align:center;
     }
-    .results {
-      max-width: 800px;
-      margin: auto;
-      background: #333;
-      padding: 1rem;
-      border-radius: 8px;
-    }
-    hr {
-      border: 0;
-      height: 1px;
-      background: #555;
-      margin: 1rem 0;
-    }
+    hr{border:0;height:1px;background:#555;margin:1rem 0;}
+    .results{max-width:800px;margin:auto;background:#333;padding:1rem;border-radius:8px;}
   </style>
 </head>
 <body>
-  <h1>Vampire Unit Battle Simulator</h1>
+  <h1>Vampire the Masquerade – Battle Simulator</h1>
 
-  <div class="container">
+  <div class="flex">
     <div class="card">
-      <label for="vampireUnit">Select Vampire Unit</label>
-      <select id="vampireUnit"></select>
+      <h2>Recruit Vampires</h2>
+      <select id="vampiresSelect"></select>
+      <button onclick="addUnit('vampires')">Add Vampire</button>
     </div>
     <div class="card">
-      <label for="humanUnit">Select Human Unit</label>
-      <select id="humanUnit"></select>
+      <h2>Recruit Humans</h2>
+      <select id="humansSelect"></select>
+      <button onclick="addUnit('humans')">Add Human</button>
     </div>
   </div>
 
-  <button onclick="startBattle()">Start Battle</button>
+  <div id="activeRoster"></div>
+
+  <div class="battle-bar">
+    <label>Vampire Combatant
+      <select id="vampireActiveSelect"></select>
+    </label>
+    <label>Human Combatant
+      <select id="humanActiveSelect"></select>
+    </label>
+    <button onclick="startBattle()">Roll Dice</button>
+  </div>
 
   <div class="results" id="results"></div>
 
