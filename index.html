@@ -1,26 +1,46 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8"/>
-  <title>VtM Battle Manager</title>
-  <link rel="stylesheet" href="styles.css">
+  <meta charset="UTF-8" />
+  <title>Vampire vs Human Dice Roller</title>
+
+  <!-- External style + scripts -->
+  <link rel="stylesheet" href="styles.css" />
   <script defer src="battle.js"></script>
+
+  <!-- Tiny page-specific tweaks -->
+  <style>
+    /* main column never wider than 900px */
+    .main      { max-width: 900px; margin-inline: auto; }
+    /* action cards stack at mobile width */
+    @media (max-width: 640px){
+      .flex { flex-direction: column; align-items: stretch; }
+    }
+    /* scrollable battle log */
+    #results   { max-height: 260px; overflow-y: auto; }
+    /* footer with download button */
+    footer     { text-align: center; padding: .8rem 0; font-size: .85rem; color:#888; }
+    footer a   { color: #bbb; text-decoration: underline; }
+  </style>
 </head>
 <body>
-  <!-- Roster sidebar -->
+
+  <!-- Fixed roster sidebar -->
   <aside id="rosterPane"></aside>
 
-  <!-- Main content -->
+  <!-- Scrollable main column -->
   <div class="main">
+
     <h1>Vampire vs Human Dice Roller</h1>
 
-    <!-- Recruit panels -->
+    <!-- Recruit -->
     <div class="flex">
       <div class="card">
         <h2>Recruit Vampire</h2>
         <select id="vampiresSelect"></select>
         <button onclick="addUnit('vampires')">Add</button>
       </div>
+
       <div class="card">
         <h2>Recruit Human</h2>
         <select id="humansSelect"></select>
@@ -29,14 +49,14 @@
     </div>
 
     <!-- Battle setup -->
-    <div class="card">
+    <div class="card" style="margin-top:1.2rem">
       <h2>Choose Combatants</h2>
-      <div class="flex">
+      <div class="flex" style="gap:.8rem">
         <label>Vampire:
-          <select id="vampireActiveSelect" style="min-width:180px"></select>
+          <select id="vampireActiveSelect" style="min-width:185px"></select>
         </label>
         <label>Human:
-          <select id="humanActiveSelect" style="min-width:180px"></select>
+          <select id="humanActiveSelect" style="min-width:185px"></select>
         </label>
         <label>Terrain:
           <select id="terrainSelect"></select>
@@ -46,13 +66,24 @@
     </div>
 
     <!-- Battle log -->
-    <div id="results"></div>
+    <div id="results" class="card" style="margin-top:1.2rem"></div>
 
     <!-- Trait reference -->
-    <div class="card">
+    <div class="card" style="margin-top:1.2rem">
       <h2>Trait Reference</h2>
       <div id="traitRef"></div>
     </div>
+
+    <!-- History -->
+    <div class="card" style="margin-top:1.2rem">
+      <h2>Battle History</h2>
+      <div id="history"></div>
+    </div>
+
+    <footer>
+      Made with 🦇&nbsp;+&nbsp;⚔️ — download full log any time from the button above.<br>
+      Source files: <a href="https://github.com/yourrepo">GitHub</a>
+    </footer>
   </div>
 </body>
 </html>

@@ -129,7 +129,7 @@
       "revelation": 1,
       "traits": ["Courageous"],
       "maxHealth": 2,
-      "tags": ["Human"]
+      "tags": ["human", "guard"]
     },
     {
       "name": "Human Civilian",
@@ -138,7 +138,7 @@
       "revelation": 2,
       "traits": ["Innocent"],
       "maxHealth": 1,
-      "tags": ["Human", "Peasant"]
+      "tags": ["human", "peasant"]
     },
     {
       "name": "Human Scout",
@@ -146,7 +146,8 @@
       "toughness": 1,
       "revelation": 3,
       "traits": ["Stealthy"],
-      "maxHealth": 2
+      "maxHealth": 2,
+      "tags": ["human", "scout"]
     },
     {
       "name": "Human Medic",
@@ -154,7 +155,8 @@
       "toughness": 1,
       "revelation": 4,
       "traits": ["Healer"],
-      "maxHealth": 2
+      "maxHealth": 2,
+      "tags": ["human", "medic"]
     },
     {
       "name": "Human Soldier",
@@ -162,7 +164,8 @@
       "toughness": 3,
       "revelation": 2,
       "traits": ["Veteran"],
-      "maxHealth": 3
+      "maxHealth": 3,
+      "tags": ["human", "soldier"]
     }
   ]
 }

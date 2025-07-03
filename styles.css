@@ -117,3 +117,6 @@ hr{
   background:#555;
   margin:1rem 0;
 }
+
+/* highlight a trait that fired this round */
+.activeTrait { background:#d58400 !important; }
