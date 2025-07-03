@@ -1,94 +1,79 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>VtM – Battle & Roster</title>
-  <style>
-    body{
-      font-family: 'Segoe UI', sans-serif;
-      background:#1a1a1a;
-      color:#eee;
-      margin:0;
-      padding:2rem;
-    }
-    h1{text-align:center;margin-bottom:1rem;}
-    .flex{display:flex;gap:2rem;flex-wrap:wrap;justify-content:center;}
-    .card{
-      background:#2a2a2a;
-      padding:1rem;
-      border-radius:8px;
-      box-shadow:0 2px 8px rgba(0,0,0,.4);
-      max-width:300px;
-      flex:1 1 260px;
-    }
-    label,select{display:block;margin-bottom:.5rem;width:100%;}
-    button{
-      margin:.5rem 0;
-      padding:.4rem .8rem;
-      background:#b30000;
-      color:#fff;
-      border:none;
-      border-radius:4px;
-      cursor:pointer;
-    }
-    #activeRoster{
-      margin-top:2rem;
-    }
-    .roster-unit{
-      background:#444;
-      border-radius:4px;
-      padding:.3rem .6rem;
-      margin:.3rem 0;
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:.3rem;
-      flex-wrap:wrap;
-    }
-    .roster-unit small{opacity:.7;}
-    .battle-bar{
-      margin:2rem auto;
-      max-width:800px;
-      background:#333;
-      padding:1rem;
-      border-radius:8px;
-      text-align:center;
-    }
-    hr{border:0;height:1px;background:#555;margin:1rem 0;}
-    .results{max-width:800px;margin:auto;background:#333;padding:1rem;border-radius:8px;}
-  </style>
+<meta charset="UTF-8"/>
+<title>VtM Battle Manager</title>
+<style>
+  :root{--bg:#1a1a1a;--panel:#2a2a2a;--accent:#b30000;}
+  *{box-sizing:border-box}
+  body{margin:0;font-family:Segoe UI,Arial,sans-serif;background:var(--bg);color:#eee;height:100vh;display:flex}
+  /* Left-hand main column */
+  .main{flex:1;padding:1.5rem;display:flex;flex-direction:column;gap:1.5rem;overflow:auto}
+  h1,h2{margin:.2rem 0;text-align:center}
+  select,button{padding:4px 6px;font-size:1rem}
+  button{background:var(--accent);border:0;border-radius:4px;color:#fff;cursor:pointer}
+  button.small{padding:0 6px;font-size:.85rem}
+  .card{background:var(--panel);padding:1rem;border-radius:8px;box-shadow:0 2px 6px rgba(0,0,0,.4)}
+  .flex{display:flex;gap:1rem;flex-wrap:wrap;justify-content:center}
+  /* Right-hand roster sidebar */
+  #rosterPane{width:320px;background:#222;padding:1rem;overflow-y:auto}
+  .roster-unit{display:flex;flex-direction:column;margin:6px 0;padding:6px;border:1px solid #444;border-radius:6px}
+  .roster-head{display:flex;justify-content:space-between;align-items:center}
+  .badges{margin-top:4px;font-size:.8rem;display:flex;gap:4px;flex-wrap:wrap}
+  .badge{background:#444;border-radius:4px;padding:1px 4px}
+  .trait{background:#555}
+  #results{background:#333;padding:1rem;border-radius:8px;max-width:800px;margin:0 auto}
+  hr{border:0;height:1px;background:#555;margin:1rem 0}
+</style>
 </head>
 <body>
-  <h1>Vampire the Masquerade – Battle Simulator</h1>
+  <!-- Roster sidebar -->
+  <aside id="rosterPane"></aside>
 
-  <div class="flex">
-    <div class="card">
-      <h2>Recruit Vampires</h2>
-      <select id="vampiresSelect"></select>
-      <button onclick="addUnit('vampires')">Add Vampire</button>
+  <!-- Main content -->
+  <div class="main">
+    <h1>Vampire vs Human Dice Roller</h1>
+
+    <!-- Recruit -->
+    <div class="flex">
+      <div class="card">
+        <h2>Recruit Vampire</h2>
+        <select id="vampiresSelect"></select>
+        <button onclick="addUnit('vampires')">Add</button>
+      </div>
+      <div class="card">
+        <h2>Recruit Human</h2>
+        <select id="humansSelect"></select>
+        <button onclick="addUnit('humans')">Add</button>
+      </div>
     </div>
+
+    <!-- Battle setup -->
     <div class="card">
-      <h2>Recruit Humans</h2>
-      <select id="humansSelect"></select>
-      <button onclick="addUnit('humans')">Add Human</button>
+      <h2>Choose Combatants</h2>
+      <div class="flex">
+        <label>Vampire:
+          <select id="vampireActiveSelect" style="min-width:180px"></select>
+        </label>
+        <label>Human:
+          <select id="humanActiveSelect" style="min-width:180px"></select>
+        </label>
+        <label>Terrain:
+          <select id="terrainSelect">
+            <option value="plains">Plains / Fields</option>
+            <option value="hills">Hills</option>
+            <option value="forest">Forest / Wild</option>
+            <option value="urban">Urban / City / Fort</option>
+          </select>
+        </label>
+      </div>
+      <button style="margin-top:1rem" onclick="startBattle()">Roll Dice!</button>
     </div>
+
+    <!-- Battle log -->
+    <div id="results"></div>
   </div>
 
-  <div id="activeRoster"></div>
-
-  <div class="battle-bar">
-    <label>Vampire Combatant
-      <select id="vampireActiveSelect"></select>
-    </label>
-    <label>Human Combatant
-      <select id="humanActiveSelect"></select>
-    </label>
-    <button onclick="startBattle()">Roll Dice</button>
-  </div>
-
-  <div class="results" id="results"></div>
-
-  <script src="battle.js"></script>
+<script src="battle.js"></script>
 </body>
 </html>
