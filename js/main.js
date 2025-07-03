@@ -1,7 +1,7 @@
 // js/main.js
-import units from '../data/units.json' assert { type: 'json' };
-import terrain from '../data/terrain.json' assert { type: 'json' };
-import traits from '../data/traits.json' assert { type: 'json' };
+import units from '../data/units.json' with { type: 'json' };
+import terrain from '../data/terrain.json' with { type: 'json' };
+import traits from '../data/traits.json' with { type: 'json' };
 import { getTerrainBonuses } from './services/traitService.js';
 import { logBattleResult } from './services/logger.js';
 
