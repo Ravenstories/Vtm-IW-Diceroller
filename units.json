@@ -1,30 +1,154 @@
 {
   "vampires": [
     {
-      "name": "Gangrel Warpack",
-      "strength": 3,
+      "name": "Gangrel Warband",
+      "archon": "The Fang of the Forest",
+      "power": 4,
       "toughness": 2,
-      "obscurity": 1
+      "obscurity": 1,
+      "traits": ["Protean"],
+      "maxHealth": 4
     },
     {
-      "name": "Nosferatu Stalkers",
-      "strength": 2,
+      "name": "Beast pack",
+      "archon": "The Fang of the Forest",
+      "power": 3,
+      "toughness": 1,
+      "obscurity": 3,
+      "traits": ["Animal", "Self-sustaining"],
+      "maxHealth": 3
+    },
+    {
+      "name": "Ravnos Troublemakers",
+      "archon": "The Fang of the Forest",
+      "power": 1,
+      "toughness": 2,
+      "obscurity": 2,
+      "traits": ["Sabotage", "Scout"],
+      "maxHealth": 2
+    },
+    {
+      "name": "Tremere Magisters",
+      "archon": "The Occult Hand",
+      "power": 4,
+      "toughness": 1,
+      "obscurity": 2,
+      "traits": ["Seer Ritual"],
+      "maxHealth": 2
+    },
+    {
+      "name": "Gargoyle Guardian",
+      "archon": "The Occult Hand",
+      "power": 5,
       "toughness": 3,
-      "obscurity": 3
+      "obscurity": 0,
+      "traits": ["Stone Sentinel", "Self-sustaining"],
+      "maxHealth": 4
+    },
+    {
+      "name": "Assimite Mercenaries",
+      "archon": "The Occult Hand",
+      "power": 4,
+      "toughness": 3,
+      "obscurity": 5,
+      "traits": ["Blood Money"],
+      "maxHealth": 4
+    },
+    {
+      "name": "Toreador Agents",
+      "archon": "The Mind and the Veil",
+      "power": 2,
+      "toughness": 2,
+      "obscurity": 2,
+      "traits": ["Social Chameleons", "Cover Story", "Herd"],
+      "maxHealth": 3
+    },
+    {
+      "name": "Malkavian Seers",
+      "archon": "The Mind and the Veil",
+      "power": 1,
+      "toughness": 1,
+      "obscurity": 3,
+      "traits": ["Premonition", "Scout"],
+      "maxHealth": 2
+    },
+    {
+      "name": "Salubri Healers",
+      "archon": "The Mind and the Veil",
+      "power": 1,
+      "toughness": 2,
+      "obscurity": 4,
+      "traits": ["Red Salve"],
+      "maxHealth": 2
+    },
+    {
+      "name": "Ventrue Knights",
+      "archon": "The Noble Circle",
+      "power": 2,
+      "toughness": 4,
+      "obscurity": 3,
+      "traits": ["Command Authority"],
+      "maxHealth": 4
+    },
+    {
+      "name": "Brujah Guardians",
+      "archon": "The Noble Circle",
+      "power": 3,
+      "toughness": 3,
+      "obscurity": 2,
+      "traits": ["Iron Will"],
+      "maxHealth": 4
+    },
+    {
+      "name": "Nosferatu Spies",
+      "archon": "The Noble Circle",
+      "power": 2,
+      "toughness": 1,
+      "obscurity": 3,
+      "traits": ["Obfuscate"],
+      "maxHealth": 4
     }
   ],
   "humans": [
     {
-      "name": "Peasant Mob",
-      "strength": 2,
+      "name": "Human Guard",
+      "power": 1,
       "toughness": 2,
-      "revelation": 2
+      "revelation": 1,
+      "traits": ["Courageous"],
+      "maxHealth": 2
     },
     {
-      "name": "Inquisition Patrol",
-      "strength": 3,
-      "toughness": 2,
-      "revelation": 3
+      "name": "Human Civilian",
+      "power": 0,
+      "toughness": 1,
+      "revelation": 2,
+      "traits": ["Innocent"],
+      "maxHealth": 1
+    },
+    {
+      "name": "Human Scout",
+      "power": 1,
+      "toughness": 1,
+      "revelation": 3,
+      "traits": ["Stealthy"],
+      "maxHealth": 2
+    },
+    {
+      "name": "Human Medic",
+      "power": 0,
+      "toughness": 1,
+      "revelation": 4,
+      "traits": ["Healer"],
+      "maxHealth": 2
+    },
+    {
+      "name": "Human Soldier",
+      "power": 2,
+      "toughness": 3,
+      "revelation": 2,
+      "traits": ["Veteran"],
+      "maxHealth": 3
     }
   ]
 }
