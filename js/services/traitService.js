@@ -1,34 +1,22 @@
 // js/traitService.js
 import traits from '../../data/traits.json' with { type: 'json' };
 
-/**
- * Applies trait-based modifiers to a unit's stats based on context
- * @param {Object} unit - The unit to process
- * @param {Object} context - { terrain: string, opponent: Object }
- * @returns {Object} { modifiers, activeTraits }
- */
-export function getTraitModifiers(unit, context) {
-  let modifiers = { power: 0, toughness: 0, obscurity: 0 };
-  let activeTraits = [];
+export function getTraitModifiers(unit, context = {}) {
+  const modifiers = { power: 0, toughness: 0, obscurity: 0 };
+  const activeTraits = [];
 
   unit.traits?.forEach(traitName => {
     const trait = traits[traitName];
     if (!trait || !trait.effects) return;
 
     trait.effects.forEach(effect => {
-      const trigger = effect.trigger;
-      let match = false;
+      const { trigger, modifiers: effectModifiers } = effect;
 
-      if (trigger.type === 'terrain' && trigger.value.includes(context.terrain)) {
-        match = true;
-      }
+      if (!trigger?.type || !triggerHandlers[trigger.type]) return;
 
-      if (trigger.type === 'targetUnitTrait' && context.opponent?.traits?.includes(trigger.value)) {
-        match = true;
-      }
-
-      if (match) {
-        for (let [stat, value] of Object.entries(effect.modifiers)) {
+      const isTriggered = triggerHandlers[trigger.type](trigger, context);
+      if (isTriggered) {
+        for (const [stat, value] of Object.entries(effectModifiers)) {
           if (modifiers[stat] != null) modifiers[stat] += value;
         }
         activeTraits.push(traitName);
@@ -39,37 +27,20 @@ export function getTraitModifiers(unit, context) {
   return { modifiers, activeTraits };
 }
 
-/**
- * Gets the description for a trait
- * @param {string} traitName
- * @returns {string}
- */
+const triggerHandlers = {
+  terrain: (trigger, context) => trigger.value.includes(context.terrain),
+  targetUnitTrait: (trigger, context) =>
+    context.opponent?.traits?.includes(trigger.value),
+  receivedBuff: (trigger, context) => context.hasReceivedBuff === true,
+  needsBlood: (trigger, context) => context.needsBlood === true,
+  // Add more handlers as needed
+};
+
 export function getTraitDescription(traitName) {
   return traits[traitName]?.description || '';
 }
 
-/**
- * Extracts terrain-based modifiers from a unit's traits
- * Used independently of battle context
- * @param {Object} unit
- * @param {string} terrain
- * @returns {Object} { power, toughness, obscurity }
- */
 export function getTerrainBonuses(unit, terrain) {
-  let bonuses = { power: 0, toughness: 0, obscurity: 0 };
-
-  unit.traits?.forEach(traitName => {
-    const trait = traits[traitName];
-    if (!trait || !trait.effects) return;
-
-    trait.effects.forEach(effect => {
-      if (effect.trigger.type === 'terrain' && effect.trigger.value.includes(terrain)) {
-        for (let [stat, value] of Object.entries(effect.modifiers)) {
-          if (bonuses[stat] != null) bonuses[stat] += value;
-        }
-      }
-    });
-  });
-
-  return bonuses;
+  const context = { terrain };
+  return getTraitModifiers(unit, context).modifiers;
 }

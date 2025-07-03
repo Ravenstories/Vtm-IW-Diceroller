@@ -1,8 +1,7 @@
 // js/main.js
 import units from '../data/units.json' with { type: 'json' };
 import terrain from '../data/terrain.json' with { type: 'json' };
-import traits from '../data/traits.json' with { type: 'json' };
-import { getTerrainBonuses } from './services/traitService.js';
+import { getTraitModifiers } from './services/traitService.js';
 import { logBattleResult } from './services/logger.js';
 
 let activeUnits = {
@@ -76,20 +75,21 @@ function startBattle() {
   const t = document.getElementById('terrainSelect').value;
   if (!v || !h || !t) return alert('Choose terrain and units');
 
-  const bonuses = getTerrainBonuses(v, h, t, traits);
+  const vMods = getTraitModifiers(v, { terrain: t, opponent: h });
+  const hMods = getTraitModifiers(h, { terrain: t, opponent: v });
 
   const stats = {
     vampire: {
-      power: v.power + (bonuses.vampire.power || 0),
-      toughness: v.toughness + (bonuses.vampire.toughness || 0),
-      obscurity: v.obscurity + (bonuses.vampire.obscurity || 0),
-      activeTraits: bonuses.vampire.activeTraits || []
+      power: v.power + (vMods.power || 0),
+      toughness: v.toughness + (vMods.toughness || 0),
+      obscurity: v.obscurity + (vMods.obscurity || 0),
+      activeTraits: vMods.activeTraits || []
     },
     human: {
-      power: h.power + (bonuses.human.power || 0),
-      toughness: h.toughness + (bonuses.human.toughness || 0),
-      revelation: h.revelation + (bonuses.human.revelation || 0),
-      activeTraits: bonuses.human.activeTraits || []
+      power: h.power + (hMods.power || 0),
+      toughness: h.toughness + (hMods.toughness || 0),
+      revelation: h.revelation + (hMods.revelation || 0),
+      activeTraits: hMods.activeTraits || []
     }
   };
 

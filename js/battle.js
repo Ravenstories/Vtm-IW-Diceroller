@@ -1,14 +1,14 @@
-// js/battle.js (Refactored to follow SOLID principles)
+// js/battle.js
 import { getUnitByName } from './unitService.js';
-import { getTraitEffects } from './traitService.js';
+import { getTraitModifiers } from './traitService.js';
 import { logBattleResult } from './logger.js';
 
-export function simulateBattle(vampire, human, terrain, traitsData) {
+export function simulateBattle(vampire, human, terrain) {
   const vampireUnit = getUnitByName(vampire);
   const humanUnit = getUnitByName(human);
 
-  const vampireBonuses = getTraitEffects(vampireUnit.traits, terrain, traitsData);
-  const humanBonuses = getTraitEffects(humanUnit.traits, terrain, traitsData);
+  const vampireBonuses = getTraitModifiers(vampireUnit, { terrain, opponent: humanUnit });
+  const humanBonuses = getTraitModifiers(humanUnit, { terrain, opponent: vampireUnit });
 
   const finalStats = {
     vampire: applyBonuses(vampireUnit, vampireBonuses),
