@@ -1,11 +1,8 @@
-// js/main.js – patched version (2025‑07‑04)
+// js/main.js – patched again (roster‑render fix)
 // -------------------------------------------------
-// • Correctly handles the `{ modifiers, activeTraits }` object
-//   returned by `getTraitModifiers()`.
-// • Imports `traits.json` so descriptions are available.
-// • Fixes “finalStats” reference error.
-// • Deduplicates trait‑info rendering.
-// • Keeps existing folder structure – no imaginary files.
+// • Reverts to the original single #rosters container
+//   to avoid null‑element errors.
+// • Still includes all previous trait‑bonus fixes.
 
 /* ----------------------------------
    Imports & constants
@@ -18,14 +15,13 @@ import { getTraitModifiers } from "./services/traitService.js";
 import { logBattleResult }  from "./services/logger.js";
 
 /* ----------------------------------
-   DOM helpers
+   DOM helpers – resolve once
 ---------------------------------- */
-const terrainSelect   = document.getElementById("terrainSelect");
-const vampireRosterEl = document.getElementById("vampireRoster");
-const humanRosterEl   = document.getElementById("humanRoster");
-const traitListEl     = document.getElementById("traitList");
-const vampTraitsEl    = document.getElementById("vampireTraits");
-const humanTraitsEl   = document.getElementById("humanTraits");
+const rosterRoot     = document.getElementById("rosters"); // <<< only existing container
+const terrainSelect  = document.getElementById("terrainSelect");
+const traitListEl    = document.getElementById("traitList");
+const vampTraitsEl   = document.getElementById("vampireTraits");
+const humanTraitsEl  = document.getElementById("humanTraits");
 
 /* ----------------------------------
    Local state
@@ -45,8 +41,7 @@ function getTraitDescription(name) {
 function makeTraitBlock(unit) {
   if (!unit.activeTraits?.length) return "<em>No traits activated.</em>";
   return `<strong>${unit.name}</strong><ul>${unit.activeTraits
-    .map((t) => `<li>${t} — ${getTraitDescription(t)}</li>`)
-    .join("")}</ul>`;
+    .map((t) => `<li>${t} — ${getTraitDescription(t)}</li>`) .join("")}</ul>`;
 }
 
 function renderTraitInfo(vampireStats, humanStats) {
@@ -58,11 +53,13 @@ function renderTraitInfo(vampireStats, humanStats) {
    Roster rendering & UI controls
 ---------------------------------- */
 function renderRosters() {
-  vampireRosterEl.innerHTML = "";
-  humanRosterEl.innerHTML   = "";
+  rosterRoot.innerHTML = ""; // wipe
 
   ["vampires", "humans"].forEach((race) => {
-    const target = race === "vampires" ? vampireRosterEl : humanRosterEl;
+    const block = document.createElement("div");
+    block.className = "roster-block";
+    block.innerHTML = `<h4>${race.toUpperCase()}</h4>`;
+
     activeUnits[race].forEach((u, i) => {
       const row = document.createElement("div");
       row.className = "roster-unit";
@@ -77,15 +74,19 @@ function renderRosters() {
           <button onclick="adjustHealth('${race}',${i},1)">+</button>
           <button onclick="removeUnit('${race}',${i})">x</button>
         </span>`;
-      target.appendChild(row);
+      block.appendChild(row);
     });
+
+    rosterRoot.appendChild(block);
   });
+
   updateActiveSelects();
 }
 
 function updateActiveSelects() {
   ["vampires", "humans"].forEach((race) => {
     const sel = document.getElementById(race.slice(0, -1) + "ActiveSelect");
+    if (!sel) return; // fail‑safe if element missing
     sel.innerHTML = "";
     activeUnits[race].forEach((u, i) =>
       sel.add(new Option(`${u.name} (${u.health})`, i))
@@ -95,6 +96,7 @@ function updateActiveSelects() {
 
 window.adjustHealth = function (race, i, delta) {
   const u = activeUnits[race][i];
+  if (!u) return;
   u.health = Math.max(0, Math.min(u.maxHealth, u.health + delta));
   renderRosters();
 };
@@ -138,7 +140,6 @@ window.startBattle = function () {
 
   if (!v || !h || !t) return alert("Choose terrain and units");
 
-  // 🔑 Correctly unpack modifier objects
   const { modifiers: vMods, activeTraits: vActive } = getTraitModifiers(v, {
     terrain: t,
     opponent: h,
