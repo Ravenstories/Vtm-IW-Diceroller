@@ -23,6 +23,31 @@ const traitListEl    = document.getElementById("traitList");
 const vampTraitsEl   = document.getElementById("vampireTraits");
 const humanTraitsEl  = document.getElementById("humanTraits");
 
+/* ----------  PERSISTENCE  ---------- */
+const LS_KEY_ROSTER = "vtm-roster";
+const LS_KEY_LOG    = "vtm-battle-log";
+
+function saveRoster () {
+  localStorage.setItem(LS_KEY_ROSTER, JSON.stringify(activeUnits));
+}
+
+function loadRoster () {
+  try {
+    const data = JSON.parse(localStorage.getItem(LS_KEY_ROSTER) || "");
+    if (data?.vampires && data?.humans) activeUnits = data;
+  } catch { /* ignore parse errors */ }
+}
+
+function saveBattleLog (html) {
+  localStorage.setItem(LS_KEY_LOG, html);
+}
+
+function restoreBattleLog () {
+  const html = localStorage.getItem(LS_KEY_LOG);
+  if (html) document.getElementById("results").innerHTML = html;
+}
+/* ---------------------------------- */
+
 /* ----------------------------------
    Local state
 ---------------------------------- */
@@ -86,6 +111,7 @@ function renderRosters () {
   });
 
   updateActiveSelects();
+  saveRoster();
 }
 
 function updateActiveSelects() {
@@ -221,11 +247,13 @@ function resolveBattle (s) {
    Boot‑strap
 ---------------------------------- */
 document.addEventListener("DOMContentLoaded", () => {
+  loadRoster();          
   populateTraitList();
   populateSelect("vampiresSelect", units.vampires);
   populateSelect("humansSelect",   units.humans);
   populateTerrainSelect();
   renderRosters();
+  restoreBattleLog();   
 });
 
 /* Helper: populateSelect (unchanged) */
