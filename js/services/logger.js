@@ -1,8 +1,8 @@
 // js/logger.js
 export function logBattleResult(vampire, human, terrain, stats, result) {
-  const log = document.getElementById('battle-log');
+  const log = document.getElementById('results');
   const entry = document.createElement('div');
-  entry.className = 'log-entry';
+  entry.classList.add('log-entry');
 
   entry.innerHTML = `
     <h4>Battle on ${terrain}</h4>
