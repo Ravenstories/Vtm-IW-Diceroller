@@ -61,13 +61,15 @@ const triggerHandlers = {
   /** opponent has a specific trait */
   /** fires when the opponent owns the named trait *or* tag */
   targetUnitTrait : (trigger, ctx) => {
-    const normalise = s => String(s).toLowerCase().trim();
-    const oppVals = [
+    const norm = s => String(s).toLowerCase().trim();
+    const pool = [
       ...(ctx.opponent?.traits || []),
       ...(ctx.opponent?.tags   || [])
-    ].map(normalise);
-    const wanted = (Array.isArray(trigger.value) ? trigger.value : [trigger.value]).map(normalise);
-    return wanted.some(w => oppVals.includes(w));
+    ].map(norm);
+
+    const wants = (Array.isArray(trigger.value) ? trigger.value : [trigger.value])
+                  .map(norm);
+    return wants.some(w => pool.includes(w));
   },
 
   /** simple boolean flags the engine might pass in */

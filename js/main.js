@@ -98,6 +98,7 @@ function renderRosters () {
           <small>HP ${u.health}/${u.maxHealth}</small><br/>
           <small>Pow ${u.power}, Tgh ${u.toughness}, ${obsLabel} ${obsVal}</small><br/>
           <small>Traits: ${u.traits?.join(", ") || "—"}</small>
+          <small>Tags: ${u.tags?.join(", ") || "—"}</small>
         </div>
         <span class="controls">
           <button onclick="adjustHealth('${race}',${i},-1)">-</button>
