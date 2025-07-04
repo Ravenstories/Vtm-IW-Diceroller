@@ -52,21 +52,26 @@ function renderTraitInfo(vampireStats, humanStats) {
 /* ----------------------------------
    Roster rendering & UI controls
 ---------------------------------- */
-function renderRosters() {
-  rosterRoot.innerHTML = ""; // wipe
+function renderRosters () {
+  rosterRoot.innerHTML = "";
 
-  ["vampires", "humans"].forEach((race) => {
-    const block = document.createElement("div");
+  ["vampires", "humans"].forEach(race => {
+    const isVamp   = race === "vampires";
+    const obsLabel = isVamp ? "Obs" : "Rev";      // ★ new
+    const block    = document.createElement("div");
     block.className = "roster-block";
     block.innerHTML = `<h4>${race.toUpperCase()}</h4>`;
 
     activeUnits[race].forEach((u, i) => {
+      const obsVal = isVamp ? u.obscurity : u.revelation ?? 0; // ★ new
+
       const row = document.createElement("div");
       row.className = "roster-unit";
       row.innerHTML = `
         <div>
-          <strong>${u.name}</strong> <small>HP ${u.health}/${u.maxHealth}</small><br/>
-          <small>Pow ${u.power}, Tgh ${u.toughness}, Obs ${u.obscurity}</small><br/>
+          <strong>${u.name}</strong>
+          <small>HP ${u.health}/${u.maxHealth}</small><br/>
+          <small>Pow ${u.power}, Tgh ${u.toughness}, ${obsLabel} ${obsVal}</small><br/>
           <small>Traits: ${u.traits?.join(", ") || "—"}</small>
         </div>
         <span class="controls">
