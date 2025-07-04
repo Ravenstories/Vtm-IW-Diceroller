@@ -179,24 +179,44 @@ window.startBattle = function () {
   renderTraitInfo(stats.vampire, stats.human);
 };
 
-function resolveBattle(stats) {
-  const roll = (n) => Array.from({ length: n }, () => Math.floor(Math.random() * 10) + 1);
-  const suc  = (r) => r.filter((n) => n >= 6).length;
+/* ----------------------------------
+   Roll helper (shared by each stat)
+---------------------------------- */
+function rollDice (pool) {
+  const rolls     = Array.from({ length: pool },
+                               () => Math.floor(Math.random() * 10) + 1);
+  const successes = rolls.filter(r => r >= 6).length;
+  return { rolls, successes };
+}
 
-  const vampPow = suc(roll(stats.vampire.power));
-  const humTgh  = suc(roll(stats.human.toughness));
-  const humPow  = suc(roll(stats.human.power));
-  const vampTgh = suc(roll(stats.vampire.toughness));
-  const vampObs = suc(roll(stats.vampire.obscurity));
-  const humRev  = suc(roll(stats.human.revelation));
+/* ----------------------------------
+   Full opposed-check + winner logic
+---------------------------------- */
+function resolveBattle (stats) {
+  /* roll every pool, keep both the faces and success totals */
+  const vp = rollDice(stats.vampire.power);
+  const ht = rollDice(stats.human.toughness);
 
-  const score    = [vampPow > humTgh, humPow > vampTgh, vampObs > humRev];
-  const winCount = score.filter(Boolean).length;
+  const hp = rollDice(stats.human.power);
+  const vt = rollDice(stats.vampire.toughness);
+
+  const vo = rollDice(stats.vampire.obscurity);
+  const hr = rollDice(stats.human.revelation);
+
+  /* decide each of the three contests */
+  const outcomes = {
+    powerVsTough : vp.successes > ht.successes,      // vampire attack
+    toughVsPower : hp.successes > vt.successes,      // human attack
+    stealthCheck : vo.successes > hr.successes       // stealth vs revelation
+  };
+
+  const winCount = Object.values(outcomes).filter(Boolean).length;
   const winner   = winCount >= 2 ? "Vampires" : "Humans";
 
   return {
     winner,
-    reason: `${vampPow}vP vs ${humTgh}hT, ${humPow}hP vs ${vampTgh}vT, ${vampObs}vO vs ${humRev}hR`,
+    rolls : { vp, ht, hp, vt, vo, hr },   // expose for the logger
+    outcomes
   };
 }
 

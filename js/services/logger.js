@@ -1,28 +1,34 @@
-// js/logger.js
-export function logBattleResult(vampire, human, terrain, stats, result) {
-  const log = document.getElementById('results');
-  const entry = document.createElement('div');
-  entry.classList.add('log-entry');
+/* logBattleResult(unitA, unitB, terrainId, stats, result) -------------- */
+export function logBattleResult (vamp, human, terrainId, stats, result) {
+  const log = document.createElement("article");
+  log.className = "battle-log";
 
-  entry.innerHTML = `
-    <h4>Battle on ${terrain}</h4>
-    <p><strong>${vampire.name}</strong> vs <strong>${human.name}</strong></p>
-    <ul>
-      <li>Vampire Power (${stats.vampire.power}) vs Human Toughness (${stats.human.toughness})</li>
-      <li>Human Power (${stats.human.power}) vs Vampire Toughness (${stats.vampire.toughness})</li>
-      <li>Vampire Obscurity (${stats.vampire.obscurity}) vs Human Revelation (${stats.human.revelation})</li>
+  /* ⇢ Title */
+  log.innerHTML = `
+    <h4>Battle on ${terrainId}</h4>
+    <strong>${vamp.name}</strong> vs <strong>${human.name}</strong>
+    <ul class="rolls">
+      ${row("Vampire Power",        result.rolls.vp, "Human Toughness",  result.rolls.ht)}
+      ${row("Human Power",          result.rolls.hp, "Vampire Toughness",result.rolls.vt)}
+      ${row("Vampire Obscurity",    result.rolls.vo, "Human Revelation", result.rolls.hr)}
     </ul>
-    <p><strong>Winner:</strong> ${result.winner}</p>
-    <p><em>${result.reason}</em></p>
-    ${stats.vampire.activeTraits.length > 0 ? `<p>Vampire traits used: ${stats.vampire.activeTraits.join(', ')}</p>` : ''}
-    ${stats.human.activeTraits.length > 0 ? `<p>Human traits used: ${stats.human.activeTraits.join(', ')}</p>` : ''}
-    <hr />
+    <p class="winner">🏆 Winner: <b>${result.winner}</b></p>
+    <hr/>
   `;
 
-  log.prepend(entry);
+  document.getElementById("battleLog").prepend(log); // newest on top
 }
 
-function displayTraits(unit) {
-  if (!unit.activeTraits || unit.activeTraits.length === 0) return '';
-  return `<br /><em>Activated Traits:</em> ${unit.activeTraits.join(', ')}`;
+/* helper → one pretty list item per opposed roll */
+function row (lhsLabel, lhs, rhsLabel, rhs) {
+  const s = (n) => n === 1 ? "success" : "successes";
+  const fmt = ({ rolls, successes }) =>
+        `<span class="faces">${rolls.join(", ")}</span>
+         <em>${successes} ${s(successes)}</em>`;
+
+  return `<li>
+    ${lhsLabel}: ${fmt(lhs)}
+    &nbsp;vs&nbsp;
+    ${rhsLabel}: ${fmt(rhs)}
+  </li>`;
 }

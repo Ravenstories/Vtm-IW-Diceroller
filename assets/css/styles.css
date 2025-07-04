@@ -81,3 +81,8 @@ hr {
   border-top: 1px solid #444;
   margin-top: 1rem;
 }
+
+.rolls   { margin: .5rem 0 0 1rem; padding:0; }
+.rolls li{ margin:.25rem 0; list-style:disc; }
+.faces   { font-family:monospace; }
+.winner  { margin:.5rem 0 0; font-size:1.1em; }
