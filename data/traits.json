@@ -4,7 +4,7 @@
     "description": "+1 Power and +2 Obscurity in forests or wild hexes",
     "effects": [
       {
-        "trigger": { "type": "terrain", "value": ["forest", "wild"] },
+        "trigger": { "type": "terrain", "value": ["forest"] },
         "modifiers": { "power": 1, "obscurity": 2 }
       }
     ]
@@ -14,7 +14,7 @@
     "description": "+1 Power in urban or shadowed hexes",
     "effects": [
       {
-        "trigger": { "type": "terrain", "value": ["urban", "shadowed"] },
+        "trigger": { "type": "terrain", "value": ["urban"] },
         "modifiers": { "power": 1 }
       }
     ]

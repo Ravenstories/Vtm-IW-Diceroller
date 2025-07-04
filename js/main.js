@@ -95,6 +95,7 @@ function startBattle() {
 
   const result = resolveBattle(stats);
   logBattleResult(v, h, t, stats, result);
+  renderTraitInfo(v, h, stats);
 }
 
 function resolveBattle(stats) {
@@ -117,6 +118,22 @@ function resolveBattle(stats) {
     reason: `${vampPow}vP vs ${humTgh}hT, ${humPow}hP vs ${vampTgh}vT, ${vampObs}vO vs ${humRev}hR`
   };
 }
+
+function renderTraitInfo(vampireUnit, humanUnit, stats) {
+  const vampBlock = document.getElementById('vampireTraits');
+  const humBlock = document.getElementById('humanTraits');
+
+  vampBlock.innerHTML = `<h5>${vampireUnit.name} Traits</h5>` +
+    stats.vampire.activeTraits.map(name =>
+      `<div><strong>${name}</strong>: ${getTraitDescription(name)}</div>`
+    ).join('');
+
+  humBlock.innerHTML = `<h5>${humanUnit.name} Traits</h5>` +
+    stats.human.activeTraits.map(name =>
+      `<div><strong>${name}</strong>: ${getTraitDescription(name)}</div>`
+    ).join('');
+}
+
 
 // Init
 window.addUnit = addUnit;
