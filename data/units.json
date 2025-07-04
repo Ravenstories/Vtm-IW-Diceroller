@@ -166,6 +166,62 @@
       "traits": ["Veteran"],
       "maxHealth": 3,
       "tags": ["human", "soldier"]
+    },
+    {
+      "name": "Peasant Mob",
+      "power": 2,
+      "toughness": 1,
+      "revelation": 2,
+      "traits": ["Villagers"],
+      "maxHealth": 2
+    },
+    {
+      "name": "Levy Army",
+      "power": 3,
+      "toughness": 2,
+      "revelation": 2,
+      "traits": ["Road-Wardens"],
+      "maxHealth": 4
+    },
+    {
+      "name": "Scouts",
+      "power": 1,
+      "toughness": 2,
+      "revelation": 3,
+      "traits": ["Scout"],
+      "maxHealth": 2
+    },
+    {
+      "name": "Knights",
+      "power": 3,
+      "toughness": 4,
+      "revelation": 2,
+      "traits": ["Cavalry"],
+      "maxHealth": 4
+    },
+    {
+      "name": "Priest",
+      "power": 3,
+      "toughness": 2,
+      "revelation": 2,
+      "traits": ["Truefaith"],
+      "maxHealth": 3
+    },
+    {
+      "name": "Inquisitor",
+      "power": 5,
+      "toughness": 3,
+      "revelation": 5,
+      "traits": ["Holy"],
+      "maxHealth": 4
+    },
+    {
+      "name": "Werewolf",
+      "power": 5,
+      "toughness": 5,
+      "revelation": 0,
+      "traits": ["Feral"],
+      "maxHealth": 5
     }
   ]
 }

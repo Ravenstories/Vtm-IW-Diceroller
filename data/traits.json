@@ -118,5 +118,55 @@
     "type": "action",
     "description": "Use 1 action and 1 blood to see any one square on the map for the rest of the turn.",
     "effects": []
+  },
+  "Villagers": {
+    "type": "passive",
+    "description": "+1 to all stats when on an urban field.",
+    "effects": [
+      {
+        "trigger": { "type": "terrain", "value": ["urban"] },
+        "modifiers": { "power": 1, "toughness": 1, "revelation": 1 }
+      }
+    ]
+  },
+  "Road-Wardens": {
+    "type": "passive",
+    "description": "+1 Toughness and Revelation when on a road field.",
+    "effects": [
+      {
+        "trigger": { "type": "terrain", "value": ["road"] },
+        "modifiers": { "toughness": 1, "revelation": 1 }
+      }
+    ]
+  },
+  "Cavalry": {
+    "type": "passive",
+    "description": "+1 Power when on a plains field.",
+    "effects": [
+      {
+        "trigger": { "type": "terrain", "value": ["plains"] },
+        "modifiers": { "power": 1 }
+      }
+    ]
+  },
+  "Truefaith": {
+    "type": "passive",
+    "description": "+1 to all stats when fighting a Vampire.",
+    "effects": []          
+  },
+  "Holy": {
+    "type": "passive",
+    "description": "Cannot take damage while the Holy Shield is up.",
+    "effects": []          
+  },
+  "Feral": {
+    "type": "passive",
+    "description": "+2 Power and Toughness in wild / forest terrain.",
+    "effects": [
+      {
+        "trigger": { "type": "terrain", "value": ["forest"] },
+        "modifiers": { "power": 2, "toughness": 2 }
+      }
+    ]
   }
 }
