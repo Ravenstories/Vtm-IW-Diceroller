@@ -7,12 +7,12 @@ export function simulateBattle(vampire, human, terrain) {
   const vampireUnit = getUnitByName(vampire);
   const humanUnit = getUnitByName(human);
 
-  const vampireBonuses = getTraitModifiers(vampireUnit, { terrain, opponent: humanUnit });
-  const humanBonuses = getTraitModifiers(humanUnit, { terrain, opponent: vampireUnit });
+  const vampireBonusData = getTraitModifiers(vampireUnit, { terrain, opponent: humanUnit });
+  const humanBonusData = getTraitModifiers(humanUnit, { terrain, opponent: vampireUnit });
 
   const finalStats = {
-    vampire: applyBonuses(vampireUnit, vampireBonuses),
-    human: applyBonuses(humanUnit, humanBonuses)
+    vampire: applyBonuses(vampireUnit, vampireBonusData),
+    human: applyBonuses(humanUnit, humanBonusData)
   };
 
   const result = resolveBattle(finalStats);
@@ -20,15 +20,15 @@ export function simulateBattle(vampire, human, terrain) {
   return result;
 }
 
-function applyBonuses(unit, bonuses) {
+function applyBonuses(unit, bonusData) {
   return {
     name: unit.name,
-    power: unit.power + (bonuses.power || 0),
-    toughness: unit.toughness + (bonuses.toughness || 0),
-    obscurity: unit.obscurity + (bonuses.obscurity || 0),
-    revelation: unit.revelation + (bonuses.revelation || 0),
+    power: unit.power + (bonusData.modifiers?.power || 0),
+    toughness: unit.toughness + (bonusData.modifiers?.toughness || 0),
+    obscurity: unit.obscurity + (bonusData.modifiers?.obscurity || 0),
+    revelation: unit.revelation + (bonusData.modifiers?.revelation || 0),
     traits: unit.traits,
-    activeTraits: bonuses.activeTraits || []
+    activeTraits: bonusData.activeTraits || []
   };
 }
 
