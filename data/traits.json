@@ -152,7 +152,12 @@
   "Truefaith": {
     "type": "passive",
     "description": "+1 to all stats when fighting a Vampire.",
-    "effects": []          
+    "effects": [
+      {
+        "trigger": { "type": "targetUnitTrait", "value": "vampire" },
+        "modifiers": { "power": 1, "toughness": 1, "revelation": 1 }
+      }
+    ]         
   },
   "Holy": {
     "type": "passive",

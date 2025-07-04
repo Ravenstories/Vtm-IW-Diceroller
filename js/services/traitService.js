@@ -59,8 +59,12 @@ const triggerHandlers = {
   },
 
   /** opponent has a specific trait */
-  targetUnitTrait : (trigger, ctx) =>
-    ctx.opponent?.traits?.includes(trigger.value),
+  /** fires when the opponent owns the named trait *or* tag */
+  targetUnitTrait : (trigger, ctx) => {
+    const opp = ctx.opponent || {};
+    return (opp.traits || []).includes(trigger.value) ||
+           (opp.tags   || []).includes(trigger.value);
+  },
 
   /** simple boolean flags the engine might pass in */
   receivedBuff : (_t, ctx) => ctx.hasReceivedBuff === true,

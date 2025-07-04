@@ -173,7 +173,8 @@
       "toughness": 1,
       "revelation": 2,
       "traits": ["Villagers"],
-      "maxHealth": 2
+      "maxHealth": 2,
+      "tags": ["human", "peasant"]
     },
     {
       "name": "Levy Army",
@@ -181,7 +182,8 @@
       "toughness": 2,
       "revelation": 2,
       "traits": ["Road-Wardens"],
-      "maxHealth": 4
+      "maxHealth": 4,
+      "tags": ["human", "soldier"]
     },
     {
       "name": "Scouts",
@@ -189,7 +191,8 @@
       "toughness": 2,
       "revelation": 3,
       "traits": ["Scout"],
-      "maxHealth": 2
+      "maxHealth": 2,
+      "tags": ["human", "scout"]
     },
     {
       "name": "Knights",
@@ -197,7 +200,8 @@
       "toughness": 4,
       "revelation": 2,
       "traits": ["Cavalry"],
-      "maxHealth": 4
+      "maxHealth": 4,
+      "tags": ["human", "cavalry"]
     },
     {
       "name": "Priest",
@@ -205,7 +209,8 @@
       "toughness": 2,
       "revelation": 2,
       "traits": ["Truefaith"],
-      "maxHealth": 3
+      "maxHealth": 3,
+      "tags": ["human", "priest"]
     },
     {
       "name": "Inquisitor",
@@ -213,7 +218,8 @@
       "toughness": 3,
       "revelation": 5,
       "traits": ["Holy"],
-      "maxHealth": 4
+      "maxHealth": 4,
+      "tags": ["human", "inquisitor"]
     },
     {
       "name": "Werewolf",
@@ -221,7 +227,8 @@
       "toughness": 5,
       "revelation": 0,
       "traits": ["Feral"],
-      "maxHealth": 5
+      "maxHealth": 5,
+      "tags": ["werewolf"]
     }
   ]
 }
