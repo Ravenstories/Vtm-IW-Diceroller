@@ -41,6 +41,7 @@ export function getTraitModifiers (unit, context = {}) {
     });
   });
 
+  console.log('[traits]', unit.name, context.terrain, { modifiers, activeTraits });
   return { modifiers, activeTraits };
 }
 

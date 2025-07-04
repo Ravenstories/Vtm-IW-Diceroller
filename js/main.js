@@ -123,7 +123,10 @@ window.addUnit = function (race) {
    Terrain & trait list setup
 ---------------------------------- */
 function populateTerrainSelect() {
-  terrain.forEach((t) => terrainSelect.add(new Option(t.name, t.key)));
+  terrainSelect.innerHTML = "";                 // clear just in case
+  terrain.forEach(t =>                          // t.id is in the JSON
+    terrainSelect.add(new Option(t.name, t.id))
+  );
 }
 
 function populateTraitList() {
