@@ -1,4 +1,7 @@
 /* js/logger.js -------------------------------------------------------- */
+import { saveBattleLog } from "./main.js";   // path: logger → main
+
+
 export function logBattleResult (vamp, human, terrainId, stats, result) {
   /* find (or lazily create) the log container */
   let logRoot = document.getElementById("results");
@@ -35,4 +38,5 @@ export function logBattleResult (vamp, human, terrainId, stats, result) {
 
   /* newest battle on top */
   logRoot.prepend(entry);
+  saveBattleLog(logRoot.innerHTML);
 }
