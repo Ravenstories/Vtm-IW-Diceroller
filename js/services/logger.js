@@ -1,5 +1,5 @@
 /* js/logger.js -------------------------------------------------------- */
-import { saveBattleLog } from "./main.js";   // path: logger → main
+import { saveBattleLog } from "../main.js";   // path: logger → main
 
 
 export function logBattleResult (vamp, human, terrainId, stats, result) {
