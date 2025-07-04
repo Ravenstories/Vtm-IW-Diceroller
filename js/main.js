@@ -38,7 +38,7 @@ function loadRoster () {
   } catch { /* ignore parse errors */ }
 }
 
-function saveBattleLog (html) {
+export function saveBattleLog (html) {
   localStorage.setItem(LS_KEY_LOG, html);
 }
 
