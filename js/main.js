@@ -182,41 +182,38 @@ window.startBattle = function () {
 /* ----------------------------------
    Roll helper (shared by each stat)
 ---------------------------------- */
-function rollDice (pool) {
-  const rolls     = Array.from({ length: pool },
-                               () => Math.floor(Math.random() * 10) + 1);
-  const successes = rolls.filter(r => r >= 6).length;
-  return { rolls, successes };
+/* helper – roll N d10, count ≥ 6 as successes */
+function roll (pool) {
+  const faces     = Array.from({ length: pool }, () => Math.floor(Math.random() * 10) + 1);
+  const successes = faces.filter(n => n >= 6).length;
+  return { faces, successes };
 }
 
-/* ----------------------------------
-   Full opposed-check + winner logic
----------------------------------- */
-function resolveBattle (stats) {
-  /* roll every pool, keep both the faces and success totals */
-  const vp = rollDice(stats.vampire.power);
-  const ht = rollDice(stats.human.toughness);
+function resolveBattle (s) {
+  /* perform every opposed test */
+  const vp = roll(s.vampire.power);
+  const ht = roll(s.human.toughness);
 
-  const hp = rollDice(stats.human.power);
-  const vt = rollDice(stats.vampire.toughness);
+  const hp = roll(s.human.power);
+  const vt = roll(s.vampire.toughness);
 
-  const vo = rollDice(stats.vampire.obscurity);
-  const hr = rollDice(stats.human.revelation);
+  const vo = roll(s.vampire.obscurity);
+  const hr = roll(s.human.revelation);
 
-  /* decide each of the three contests */
   const outcomes = {
-    powerVsTough : vp.successes > ht.successes,      // vampire attack
-    toughVsPower : hp.successes > vt.successes,      // human attack
-    stealthCheck : vo.successes > hr.successes       // stealth vs revelation
+    vampAttack : vp.successes > ht.successes,
+    humanAttack: hp.successes > vt.successes,
+    stealth    : vo.successes > hr.successes
   };
 
-  const winCount = Object.values(outcomes).filter(Boolean).length;
-  const winner   = winCount >= 2 ? "Vampires" : "Humans";
+  const winner = Object.values(outcomes).filter(Boolean).length >= 2
+               ? "Vampires"
+               : "Humans";
 
+  /* keep rolls so the logger can show them */
   return {
     winner,
-    rolls : { vp, ht, hp, vt, vo, hr },   // expose for the logger
-    outcomes
+    detail : { vp, ht, hp, vt, vo, hr }    //  ← NEW
   };
 }
 

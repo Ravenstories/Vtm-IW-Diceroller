@@ -1,34 +1,38 @@
-/* logBattleResult(unitA, unitB, terrainId, stats, result) -------------- */
+/* js/logger.js -------------------------------------------------------- */
 export function logBattleResult (vamp, human, terrainId, stats, result) {
-  const log = document.createElement("article");
-  log.className = "battle-log";
+  /* find (or lazily create) the log container */
+  let logRoot = document.getElementById("results");
+  if (!logRoot) {
+    logRoot = document.createElement("div");
+    logRoot.id = "results";
+    document.body.appendChild(logRoot);
+  }
 
-  /* ⇢ Title */
-  log.innerHTML = `
+  const row = (labelA, rA, labelB, rB) => {
+    const fmt = r => `${r.faces.join(", ")} — <strong>${r.successes}</strong>`;
+    return `<li>${labelA}: ${fmt(rA)} &nbsp;vs&nbsp; ${labelB}: ${fmt(rB)}</li>`;
+  };
+
+  const { vp, ht, hp, vt, vo, hr } = result.detail;
+
+  const entry = document.createElement("div");
+  entry.className = "log-entry";
+  entry.innerHTML = `
     <h4>Battle on ${terrainId}</h4>
-    <strong>${vamp.name}</strong> vs <strong>${human.name}</strong>
-    <ul class="rolls">
-      ${row("Vampire Power",        result.rolls.vp, "Human Toughness",  result.rolls.ht)}
-      ${row("Human Power",          result.rolls.hp, "Vampire Toughness",result.rolls.vt)}
-      ${row("Vampire Obscurity",    result.rolls.vo, "Human Revelation", result.rolls.hr)}
+    <p><strong>${vamp.name}</strong> vs <strong>${human.name}</strong></p>
+    <ul class="roll-list">
+      ${row("Vampire Power",    vp, "Human Toughness",  ht)}
+      ${row("Human Power",      hp, "Vampire Toughness",vt)}
+      ${row("Vampire Obscurity",vo, "Human Revelation", hr)}
     </ul>
-    <p class="winner">🏆 Winner: <b>${result.winner}</b></p>
+    <p class="winner">🏆 <strong>Winner:</strong> ${result.winner}</p>
+    ${stats.vampire.activeTraits.length
+        ? `<p>Vampire traits used: ${stats.vampire.activeTraits.join(", ")}</p>` : ""}
+    ${stats.human.activeTraits.length
+        ? `<p>Human traits used: ${stats.human.activeTraits.join(", ")}</p>`   : ""}
     <hr/>
   `;
 
-  document.getElementById("battleLog").prepend(log); // newest on top
-}
-
-/* helper → one pretty list item per opposed roll */
-function row (lhsLabel, lhs, rhsLabel, rhs) {
-  const s = (n) => n === 1 ? "success" : "successes";
-  const fmt = ({ rolls, successes }) =>
-        `<span class="faces">${rolls.join(", ")}</span>
-         <em>${successes} ${s(successes)}</em>`;
-
-  return `<li>
-    ${lhsLabel}: ${fmt(lhs)}
-    &nbsp;vs&nbsp;
-    ${rhsLabel}: ${fmt(rhs)}
-  </li>`;
+  /* newest battle on top */
+  logRoot.prepend(entry);
 }
