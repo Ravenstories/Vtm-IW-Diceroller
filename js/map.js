@@ -2,7 +2,7 @@
 import { initUI  } from './mapUI.js';
 const ui = initUI();
 /* =========  MAP + GRID CONSTANTS  ========= */
-const MAP_SRC = "../assets/img/InquisitionWars-Map.jpg";
+const MAP_SRC = "./assets/img/InquisitionWars-Map.jpg";
 
 let hoverHex   = null;      // hex currently under cursor
 let labelAlpha = 0;         // 0 → 1 fade for text
