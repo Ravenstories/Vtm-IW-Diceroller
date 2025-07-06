@@ -1,0 +1,29 @@
+<!-- public/map.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Inquisition Wars Map</title>
+  <link rel="stylesheet" href="../assets/css/mapStyle.css">
+
+</head>
+<body>
+  <header>
+    <h2 style="margin:0;font-size:1.2rem;">Strategic Map</h2>
+    <a href="index.html">🏠 Home</a>
+  </header>
+  <main>
+    <canvas id="mapCanvas"></canvas>
+    <!-- hover tooltip -->
+    <div id="tooltip" class="tooltip"></div>
+    <!-- modal -->
+    <div id="modal" class="modal"><div class="modal__inner">
+      <h3 id="modalTitle"></h3>
+      <p  id="modalBody"></p>
+      <button id="modalClose">Close</button>
+    </div></div>
+  </main>
+  <script src="js/map.js" type="module"></script>
+  <script src="js/mapUI.js" type="module"></script>
+</body>
+</html>

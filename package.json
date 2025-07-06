@@ -1,0 +1,22 @@
+{
+  "name": "vtm-iw-diceroller",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "nodemon js/server.js",
+    "start": "cross-env NODE_ENV=production node backend/server.js",
+    "test": "cross-env NODE_ENV=test NODE_OPTIONS=--experimental-vm-modules jest"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2"
+  },
+  "devDependencies": {
+    "cross-env": "^7.0.3",
+    "jest": "^29.7.0",
+    "nodemon": "^3.1.9"
+  },
+  "jest": {
+    "testEnvironment": "node"
+  }
+}

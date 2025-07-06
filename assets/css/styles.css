@@ -1,5 +1,6 @@
 /* assets/css/styles.css */
 
+/* Layout adjustments */
 body {
   margin: 0;
   padding: 0;
@@ -7,7 +8,18 @@ body {
   background: #111;
   color: #ddd;
   display: flex;
+  flex-direction: column; /* Stack header and main vertically */
   height: 100vh;
+}
+
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 2rem;
+  background-color: #111;
+  border-bottom: 1px solid #222;
+  flex-shrink: 0;
 }
 
 main {
@@ -15,6 +27,25 @@ main {
   flex-direction: row;
   width: 100%;
   height: 100%;
+  overflow: hidden;
+  flex-grow: 1;
+}
+
+/* Button styling */
+.nav-button {
+  background-color: #900;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  font-size: 1rem;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background 0.2s ease;
+}
+
+.nav-button:hover {
+  background-color: #c00;
 }
 
 .controls { display:flex; gap:0.3rem; }
@@ -86,3 +117,4 @@ hr {
 .rolls li{ margin:.25rem 0; list-style:disc; }
 .faces   { font-family:monospace; }
 .winner  { margin:.5rem 0 0; font-size:1.1em; }
+
