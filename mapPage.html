@@ -11,6 +11,8 @@
   <header>
     <h2 style="margin:0;font-size:1.2rem;">Strategic Map</h2>
     <a href="index.html">🏠 Home</a>
+    <button id="save">Save</button>
+    <button id="load">Load</button>
   </header>
   <main>
     <canvas id="mapCanvas"></canvas>
@@ -21,7 +23,9 @@
       <h3 id="modalTitle"></h3>
       <p  id="modalBody"></p>
       <button id="modalClose">Close</button>
-    </div></div>
+    </div>
+  </div>
+  <ul id="contextMenu" style="display:none; position:absolute; background:#222; color:white; list-style:none; padding:5px; border:1px solid #444; font-size:14px;"></ul>
   </main>
   <script src="js/map.js" type="module"></script>
   <script src="js/mapUI.js" type="module"></script>

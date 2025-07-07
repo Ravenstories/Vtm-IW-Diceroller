@@ -1,0 +1,6 @@
+{
+  "units": [
+    { "id": "u001", "type": "GangrelWarband", "label": "D05" },
+    { "id": "u002", "type": "TremereMagisters", "label": "E07" }
+  ]
+}

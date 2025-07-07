@@ -1,4 +1,4 @@
-/* top-level exports only */
+// mapUI.js
 export function initUI() {
   const tip        = document.getElementById("tooltip");
   const modal      = document.getElementById("modal");
