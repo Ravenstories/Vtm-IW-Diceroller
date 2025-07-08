@@ -2,7 +2,8 @@
 import * as unitPiece from './unitPiece.js';
 import { initUI  } from './mapUI.js';
 import * as unitData from './services/unitDataService.js';
-import * as supabaseService from './services/supaBaseService.js';
+import { saveGameState, loadGameState } from "./services/apiService.js";
+
 const ui = initUI();
 let selectedPiece = null; // currently selected unit piece
 
@@ -374,19 +375,30 @@ export { hexes };
 // Save
 document.getElementById("save").onclick = async () => {
   const name = prompt("Enter save name:");
-  if (!name) return;
+  const password = prompt("Enter save password:");
+  if (!name || !password) return;
 
-  const data = JSON.parse(unitPiece.exportMapState());
-  await supabaseService.saveGameState(name, data);
-  alert("Saved!");
+  const json = JSON.parse(unitPiece.exportMapState());
+
+  try {
+    await saveGameState(name, json, password);
+    alert("✅ Save successful.");
+  } catch (err) {
+    alert(err.message);
+  }
 };
-
 // Load
 document.getElementById("load").onclick = async () => {
-  const name = prompt("Enter name to load:");
-  if (!name) return;
+  const name = prompt("Enter save name to load:");
+  const password = prompt("Enter password:");
+  if (!name || !password) return;
 
-  const json = await supabaseService.loadGameState(name);
-  unitPiece.importMapState(JSON.stringify(json));
-  render();
+  try {
+    const data = await loadGameState(name, password);
+    unitPiece.importMapState(JSON.stringify(data));
+    render();
+    alert("✅ Load successful.");
+  } catch (err) {
+    alert(err.message);
+  }
 };
