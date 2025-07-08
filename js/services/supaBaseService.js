@@ -1,11 +1,11 @@
 import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
-import { APIKEY, APIURL  } from "../config/supabase.config.js";
+import { ANONAPIKEY, APIURL  } from "../config/supabase.config.js";
 
-if (!APIURL || !APIKEY) {
+if (!APIURL || !ANONAPIKEY) {
   console.warn("🚨 Supabase credentials are missing. Did you forget to create supabase.config.js?");
 }
 
-const supabase = createClient(APIURL, APIKEY);
+const supabase = createClient(APIURL, ANONAPIKEY);
 
 export async function saveGameState(name, mapDataJson) {
   const { data, error } = await supabase
