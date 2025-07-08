@@ -10,9 +10,11 @@
 <body>
   <header>
     <h2 style="margin:0;font-size:1.2rem;">Strategic Map</h2>
-    <a href="index.html">🏠 Home</a>
-    <button id="save">Save</button>
-    <button id="load">Load</button>
+    <div class="header-buttons">
+      <button id="save" class="btn">Save</button>
+      <button id="load" class="btn">Load</button>
+      <a href="index.html">🏠 Home</a>
+    </div>
   </header>
   <main>
     <canvas id="mapCanvas"></canvas>
@@ -27,6 +29,16 @@
   </div>
   <ul id="contextMenu" style="display:none; position:absolute; background:#222; color:white; list-style:none; padding:5px; border:1px solid #444; font-size:14px;"></ul>
   </main>
+
+  <div id="unitSelectorModal" style="display:none;" class="modal">
+    <div class="modal-content">
+      <h3>Choose Unit</h3>
+      <select id="unitSelect" style="width:100%; margin:10px 0;"></select>
+      <button id="confirmUnit" class="btn">OK</button>
+      <button onclick="document.getElementById('unitSelectorModal').style.display='none'" class="btn red">Cancel</button>
+    </div>
+  </div>
+  
   <script src="js/map.js" type="module"></script>
   <script src="js/mapUI.js" type="module"></script>
 </body>

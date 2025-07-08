@@ -1,234 +1,223 @@
-{
-  "vampires": [
-    {
-      "name": "Gangrel Warband",
-      "archon": "The Fang of the Forest",
-      "power": 4,
-      "toughness": 2,
-      "obscurity": 1,
-      "traits": ["Protean"],
-      "maxHealth": 4,
-      "tags": ["Vampire"]
-    },
-    {
-      "name": "Beast pack",
-      "archon": "The Fang of the Forest",
-      "power": 3,
-      "toughness": 1,
-      "obscurity": 3,
-      "traits": ["Animal", "Self-sustaining"],
-      "maxHealth": 3,
-      "tags": ["Animal"]
-    },
-    {
-      "name": "Ravnos Troublemakers",
-      "archon": "The Fang of the Forest",
-      "power": 1,
-      "toughness": 2,
-      "obscurity": 2,
-      "traits": ["Sabotage", "Scout"],
-      "maxHealth": 2,
-      "tags": ["Vampire"]
-    },
-    {
-      "name": "Tremere Magisters",
-      "archon": "The Occult Hand",
-      "power": 4,
-      "toughness": 1,
-      "obscurity": 2,
-      "traits": ["Seer Ritual"],
-      "maxHealth": 2,
-      "tags": ["Vampire"]
-    },
-    {
-      "name": "Gargoyle Guardian",
-      "archon": "The Occult Hand",
-      "power": 5,
-      "toughness": 3,
-      "obscurity": 0,
-      "traits": ["Stone Sentinel", "Self-sustaining"],
-      "maxHealth": 4,
-      "tags": ["Gargoyle"]
-    },
-    {
-      "name": "Assimite Mercenaries",
-      "archon": "The Occult Hand",
-      "power": 4,
-      "toughness": 3,
-      "obscurity": 5,
-      "traits": ["Blood Money"],
-      "maxHealth": 4,
-      "tags": ["Vampire"]
-    },
-    {
-      "name": "Toreador Agents",
-      "archon": "The Mind and the Veil",
-      "power": 2,
-      "toughness": 2,
-      "obscurity": 2,
-      "traits": ["Social Chameleons", "Cover Story", "Herd"],
-      "maxHealth": 3,
-      "tags": ["Vampire"]
-    },
-    {
-      "name": "Malkavian Seers",
-      "archon": "The Mind and the Veil",
-      "power": 1,
-      "toughness": 1,
-      "obscurity": 3,
-      "traits": ["Premonition", "Scout"],
-      "maxHealth": 2,
-      "tags": ["Vampire"]
-    },
-    {
-      "name": "Salubri Healers",
-      "archon": "The Mind and the Veil",
-      "power": 1,
-      "toughness": 2,
-      "obscurity": 4,
-      "traits": ["Red Salve"],
-      "maxHealth": 2,
-      "tags": ["Vampire"]
-    },
-    {
-      "name": "Ventrue Knights",
-      "archon": "The Noble Circle",
-      "power": 2,
-      "toughness": 4,
-      "obscurity": 3,
-      "traits": ["Command Authority"],
-      "maxHealth": 4,
-      "tags": ["Vampire"]
-    },
-    {
-      "name": "Brujah Guardians",
-      "archon": "The Noble Circle",
-      "power": 3,
-      "toughness": 3,
-      "obscurity": 2,
-      "traits": ["Iron Will"],
-      "maxHealth": 4,
-      "tags": ["Vampire"]
-    },
-    {
-      "name": "Nosferatu Spies",
-      "archon": "The Noble Circle",
-      "power": 2,
-      "toughness": 1,
-      "obscurity": 3,
-      "traits": ["Obfuscate"],
-      "maxHealth": 4,
-      "tags": ["Vampire"]
-    }
-  ],
-  "humans": [
-    {
-      "name": "Human Guard",
-      "power": 1,
-      "toughness": 2,
-      "revelation": 1,
-      "traits": ["Courageous"],
-      "maxHealth": 2,
-      "tags": ["human", "guard"]
-    },
-    {
-      "name": "Human Civilian",
-      "power": 0,
-      "toughness": 1,
-      "revelation": 2,
-      "traits": ["Innocent"],
-      "maxHealth": 1,
-      "tags": ["human", "peasant"]
-    },
-    {
-      "name": "Human Scout",
-      "power": 1,
-      "toughness": 1,
-      "revelation": 3,
-      "traits": ["Stealthy"],
-      "maxHealth": 2,
-      "tags": ["human", "scout"]
-    },
-    {
-      "name": "Human Medic",
-      "power": 0,
-      "toughness": 1,
-      "revelation": 4,
-      "traits": ["Healer"],
-      "maxHealth": 2,
-      "tags": ["human", "medic"]
-    },
-    {
-      "name": "Human Soldier",
-      "power": 2,
-      "toughness": 3,
-      "revelation": 2,
-      "traits": ["Veteran"],
-      "maxHealth": 3,
-      "tags": ["human", "soldier"]
-    },
-    {
-      "name": "Peasant Mob",
-      "power": 2,
-      "toughness": 1,
-      "revelation": 2,
-      "traits": ["Villagers"],
-      "maxHealth": 2,
-      "tags": ["human", "peasant"]
-    },
-    {
-      "name": "Levy Army",
-      "power": 3,
-      "toughness": 2,
-      "revelation": 2,
-      "traits": ["Road-Wardens"],
-      "maxHealth": 4,
-      "tags": ["human", "soldier"]
-    },
-    {
-      "name": "Scouts",
-      "power": 1,
-      "toughness": 2,
-      "revelation": 3,
-      "traits": ["Scout"],
-      "maxHealth": 2,
-      "tags": ["human", "scout"]
-    },
-    {
-      "name": "Knights",
-      "power": 3,
-      "toughness": 4,
-      "revelation": 2,
-      "traits": ["Cavalry"],
-      "maxHealth": 4,
-      "tags": ["human", "cavalry"]
-    },
-    {
-      "name": "Priest",
-      "power": 3,
-      "toughness": 2,
-      "revelation": 2,
-      "traits": ["Truefaith"],
-      "maxHealth": 3,
-      "tags": ["human", "priest"]
-    },
-    {
-      "name": "Inquisitor",
-      "power": 5,
-      "toughness": 3,
-      "revelation": 5,
-      "traits": ["Holy"],
-      "maxHealth": 4,
-      "tags": ["human", "inquisitor"]
-    },
-    {
-      "name": "Werewolf",
-      "power": 5,
-      "toughness": 5,
-      "revelation": 0,
-      "traits": ["Feral"],
-      "maxHealth": 5,
-      "tags": ["werewolf"]
-    }
-  ]
-}
+[
+  {
+    "id": "vampire-gangrel-warband",
+    "sprite": "vampire-gangrel-warband.png",
+    "name": "Gangrel Warband",
+    "archon": "The Fang of the Forest",
+    "power": 4,
+    "toughness": 2,
+    "obscurity": 1,
+    "traits": ["Protean"],
+    "maxHealth": 4,
+    "tags": ["Vampire"]
+  },
+  {
+    "id": "vampire-beast-pack",
+    "sprite": "vampire-beast-pack.png",
+    "name": "Beast pack",
+    "archon": "The Fang of the Forest",
+    "power": 3,
+    "toughness": 1,
+    "obscurity": 3,
+    "traits": ["Animal", "Self-sustaining"],
+    "maxHealth": 3,
+    "tags": ["Animal"]
+  },
+  {
+    "id": "vampire-ravnos-troublemakers",
+    "sprite": "vampire-ravnos-troublemakers.png",
+    "name": "Ravnos Troublemakers",
+    "archon": "The Fang of the Forest",
+    "power": 1,
+    "toughness": 2,
+    "obscurity": 2,
+    "traits": ["Sabotage", "Scout"],
+    "maxHealth": 2,
+    "tags": ["Vampire"]
+  },
+  {
+    "id": "vampire-tremere-magisters",
+    "sprite": "vampire-tremere-magisters.png",
+    "name": "Tremere Magisters",
+    "archon": "The Occult Hand",
+    "power": 4,
+    "toughness": 1,
+    "obscurity": 2,
+    "traits": ["Seer Ritual"],
+    "maxHealth": 2,
+    "tags": ["Vampire"]
+  },
+  {
+    "id": "vampire-gargoyle-guardian",
+    "sprite": "vampire-gargoyle-guardian.png",
+    "name": "Gargoyle Guardian",
+    "archon": "The Occult Hand",
+    "power": 5,
+    "toughness": 3,
+    "obscurity": 0,
+    "traits": ["Stone Sentinel", "Self-sustaining"],
+    "maxHealth": 4,
+    "tags": ["Gargoyle"]
+  },
+  {
+    "id": "vampire-assimite-mercenaries",
+    "sprite": "vampire-assimite-mercenaries.png",
+    "name": "Assimite Mercenaries",
+    "archon": "The Occult Hand",
+    "power": 4,
+    "toughness": 3,
+    "obscurity": 5,
+    "traits": ["Blood Money"],
+    "maxHealth": 4,
+    "tags": ["Vampire"]
+  },
+  {
+    "id": "vampire-toreador-agents",
+    "sprite": "vampire-toreador-agents.png",
+    "name": "Toreador Agents",
+    "archon": "The Mind and the Veil",
+    "power": 2,
+    "toughness": 2,
+    "obscurity": 2,
+    "traits": ["Social Chameleons", "Cover Story", "Herd"],
+    "maxHealth": 3,
+    "tags": ["Vampire"]
+  },
+  {
+    "id": "vampire-malkavian-seers",
+    "sprite": "vampire-malkavian-seers.png",
+    "name": "Malkavian Seers",
+    "archon": "The Mind and the Veil",
+    "power": 1,
+    "toughness": 1,
+    "obscurity": 3,
+    "traits": ["Premonition", "Scout"],
+    "maxHealth": 2,
+    "tags": ["Vampire"]
+  },
+  {
+    "id": "vampire-salubri-healers",
+    "sprite": "vampire-salubri-healers.png",
+    "name": "Salubri Healers",
+    "archon": "The Mind and the Veil",
+    "power": 1,
+    "toughness": 2,
+    "obscurity": 4,
+    "traits": ["Red Salve"],
+    "maxHealth": 2,
+    "tags": ["Vampire"]
+  },
+  {
+    "id": "vampire-ventrue-knights",
+    "sprite": "vampire-ventrue-knights.png",
+    "name": "Ventrue Knights",
+    "archon": "The Noble Circle",
+    "power": 2,
+    "toughness": 4,
+    "obscurity": 3,
+    "traits": ["Command Authority"],
+    "maxHealth": 4,
+    "tags": ["Vampire"]
+  },
+  {
+    "id": "vampire-brujah-guardians",
+    "sprite": "vampire-brujah-guardians.png",
+    "name": "Brujah Guardians",
+    "archon": "The Noble Circle",
+    "power": 3,
+    "toughness": 3,
+    "obscurity": 2,
+    "traits": ["Iron Will"],
+    "maxHealth": 4,
+    "tags": ["Vampire"]
+  },
+  {
+    "id": "vampire-nosferatu-spies",
+    "sprite": "vampire-nosferatu-spies.png",
+    "name": "Nosferatu Spies",
+    "archon": "The Noble Circle",
+    "power": 2,
+    "toughness": 1,
+    "obscurity": 3,
+    "traits": ["Obfuscate"],
+    "maxHealth": 4,
+    "tags": ["Vampire"]
+  },
+  {
+    "id": "human-peasant-mob",
+    "sprite": "human-peasant-mob.png",
+    "name": "Peasant Mob",
+    "power": 2,
+    "toughness": 1,
+    "revelation": 2,
+    "traits": ["Villagers"],
+    "maxHealth": 2,
+    "tags": ["human", "peasant"]
+  },
+  {
+    "id": "human-levy-army",
+    "sprite": "human-levy-army.png",
+    "name": "Levy Army",
+    "power": 3,
+    "toughness": 2,
+    "revelation": 2,
+    "traits": ["Road-Wardens"],
+    "maxHealth": 4,
+    "tags": ["human", "soldier"]
+  },
+  {
+    "id": "human-scouts",
+    "sprite": "human-scouts.png",
+    "name": "Scouts",
+    "power": 1,
+    "toughness": 2,
+    "revelation": 3,
+    "traits": ["Scout"],
+    "maxHealth": 2,
+    "tags": ["human", "scout"]
+  },
+  {
+    "id": "human-knights",
+    "sprite": "human-knights.png",
+    "name": "Knights",
+    "power": 3,
+    "toughness": 4,
+    "revelation": 2,
+    "traits": ["Cavalry"],
+    "maxHealth": 4,
+    "tags": ["human", "cavalry"]
+  },
+  {
+    "id": "human-priest",
+    "sprite": "human-priest.png",
+    "name": "Priest",
+    "power": 3,
+    "toughness": 2,
+    "revelation": 2,
+    "traits": ["Truefaith"],
+    "maxHealth": 3,
+    "tags": ["human", "priest"]
+  },
+  {
+    "id": "human-inquisitor",
+    "sprite": "human-inquisitor.png",
+    "name": "Inquisitor",
+    "power": 5,
+    "toughness": 3,
+    "revelation": 5,
+    "traits": ["Holy"],
+    "maxHealth": 4,
+    "tags": ["human", "inquisitor"]
+  },
+  {
+    "id": "werewolf",
+    "sprite": "werewolf.png",
+    "name": "Werewolf",
+    "power": 5,
+    "toughness": 5,
+    "revelation": 0,
+    "traits": ["Feral"],
+    "maxHealth": 5,
+    "tags": ["werewolf"]
+  }
+]

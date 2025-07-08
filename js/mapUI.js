@@ -13,8 +13,8 @@ export function initUI() {
   }
   function hideTip(){ tip.style.display = "none"; }
   function openModal(title, body) {
-    modal.querySelector("h3").textContent = title;
-    modal.querySelector("p").textContent  = body;
+    modal.querySelector("h3").innerHTML  = title;
+    modal.querySelector("p").innerHTML   = body;
     modal.style.display = "flex";
   }
   modalClose.onclick = () => (modal.style.display = "none");

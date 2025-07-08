@@ -4,26 +4,40 @@ import { hexes } from './map.js'; // we'll expose this in step 2
 const unitPieces = [];
 const unitSprites = {};
 
-export function addUnitPiece({ id, label, color = "red" }) {
+export function addUnitPiece({ id, label, color = "red", type }) {
   const hex = hexes.find(h => h.label === label);
   if (!hex) return;
 
-  unitPieces.push({ id, label, color, x: hex.x, y: hex.y });
+  unitPieces.push({
+    id,
+    label,
+    type,              // ✅ this must exist
+    color,
+    x: hex.x,
+    y: hex.y
+  });
 }
 
+
 export function drawUnitPieces(ctx, zoom) {
-    
   for (const piece of unitPieces) {
     if (piece.sprite && unitSprites[piece.sprite]) {
       ctx.drawImage(unitSprites[piece.sprite], piece.x - 20, piece.y - 20, 40, 40);
     } else {
       // fallback: colored circle
-      ctx.beginPath();
-      ctx.arc(piece.x, piece.y, 20 * zoom, 0, Math.PI * 2);
-      ctx.fillStyle = piece.color;
-      ctx.fill();
-      ctx.strokeStyle = "white";
-      ctx.stroke();
+      if (piece.type && unitSprites[piece.type]) {
+        const img = unitSprites[piece.type];
+        const size = 60;
+        ctx.drawImage(img, piece.x - size / 2, piece.y - size / 2, size, size);
+      } else {
+        // fallback circle if no sprite
+        ctx.beginPath();
+        ctx.arc(piece.x, piece.y, 18 * zoom, 0, Math.PI * 2);
+        ctx.fillStyle = piece.color || "red";
+        ctx.fill();
+        ctx.strokeStyle = "white";
+        ctx.stroke();
+      }
     }
   }
 }
@@ -44,11 +58,12 @@ export function getPieceAt(x, y, radius = 20) {
   );
 }
 
-export function loadUnitSprites(spriteManifest) {
-  for (const [type, path] of Object.entries(spriteManifest)) {
+export function loadUnitSpritesFromUnitData(unitList) {
+  for (const unit of unitList) {
+    if (!unit.sprite) continue;
     const img = new Image();
-    img.src = path;
-    unitSprites[type] = img;
+    img.src = `./assets/sprites/${unit.sprite}`;
+    unitSprites[unit.id] = img;
   }
 }
 
@@ -60,7 +75,7 @@ export function removeUnit(id) {
 export function exportMapState() {
   return JSON.stringify(unitPieces.map(p => ({
     id: p.id,
-    type: p.sprite,
+    type: p.sprite || p.type,
     label: p.label
   })));
 }
@@ -69,7 +84,7 @@ export function importMapState(json) {
   unitPieces.length = 0;
   const data = JSON.parse(json);
   for (const u of data) {
-    addUnitPiece({ id: u.id, label: u.label, sprite: u.type });
+    addUnitPiece({ id: u.id, label: u.label, type: u.type });
   }
 }
 

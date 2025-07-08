@@ -1,6 +1,8 @@
 /* =========  IMPORT UI HELPERS  ========= */
 import * as unitPiece from './unitPiece.js';
 import { initUI  } from './mapUI.js';
+import * as unitData from './services/unitDataService.js';
+import * as supabaseService from './services/supaBaseService.js';
 const ui = initUI();
 let selectedPiece = null; // currently selected unit piece
 
@@ -54,44 +56,50 @@ function build(){
 }
 
 /* ---------- draw ---------- */
-function drawHex(h, highlight=false, showLabel=false, alpha=1){
+function drawHex(hex, shouldFill = false, showLabel = false, alpha = 1) {
   ctx.beginPath();
-  for(let i=0;i<6;i++){
-    const a=Math.PI/180*60*i;
-    const px=h.x+HEX_R*Math.cos(a), py=h.y+HEX_R*Math.sin(a);
-    i?ctx.lineTo(px,py):ctx.moveTo(px,py);
+  for (let i = 0; i < 6; i++) {
+    const angle = Math.PI / 180 * (60 * i);
+    const px = hex.x + HEX_R * Math.cos(angle);
+    const py = hex.y + HEX_R * Math.sin(angle);
+    i ? ctx.lineTo(px, py) : ctx.moveTo(px, py);
   }
   ctx.closePath();
 
-  if(highlight){ ctx.fillStyle="rgba(180,0,0,.35)"; ctx.fill(); }
-  ctx.strokeStyle="rgba(255,255,255,.15)"; ctx.stroke();
+  if (shouldFill) {
+    ctx.fillStyle = "rgba(180, 0, 0, 0.35)";
+    ctx.fill();
+  }
 
-  if(showLabel){
+  ctx.strokeStyle = "rgba(255, 255, 255, 0.15)";
+  ctx.stroke();
+
+  if (showLabel) {
     ctx.save();
-    ctx.globalAlpha = alpha;                       // fade!
-    ctx.fillStyle   = "#fff";
-    ctx.font        = "11px sans-serif";
-    ctx.textAlign   = "center";
-    ctx.textBaseline= "middle";
-    ctx.fillText(h.label,h.x,h.y);
+    ctx.globalAlpha = alpha;
+    ctx.fillStyle = "#fff";
+    ctx.font = "11px sans-serif";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.fillText(hex.label, hex.x, hex.y);
     ctx.restore();
   }
 }
-function render(){
-  ctx.setTransform(1,0,0,1,0,0);
-  ctx.clearRect(0,0,cvs.width,cvs.height);
+function render() {
+  ctx.setTransform(1, 0, 0, 1, 0, 0);
+  ctx.clearRect(0, 0, cvs.width, cvs.height);
 
   ctx.save();
-  ctx.translate(offX,offY);
-  ctx.scale(zoom,zoom);
-  ctx.drawImage(img,0,0);
+  ctx.translate(offX, offY);
+  ctx.scale(zoom, zoom);
+  ctx.drawImage(img, 0, 0);
 
-  hexes.forEach(h=>{
-    const isSel   = h.label===sel;
-    const isHover = h===hoverHex;
-    drawHex(h,isSel,isHover,labelAlpha);
+  hexes.forEach(hex => {
+    const isHover = hex === hoverHex;
+    drawHex(hex, isHover, isHover, labelAlpha);
   });
-  unitPiece.drawUnitPieces(ctx, zoom); // draw unit pieces on top of hexes
+
+  unitPiece.drawUnitPieces(ctx, zoom);
   ctx.restore();
 }
 /* ---------- util ---------- */
@@ -108,178 +116,231 @@ function tick(){
   render();
   requestAnimationFrame(tick);
 }
+function showUnitSelector(onConfirm) {
+  const modal = document.getElementById("unitSelectorModal");
+  const select = document.getElementById("unitSelect");
+  const button = document.getElementById("confirmUnit");
+
+  const unitList = unitData.getUnitTypes();
+  select.innerHTML = "";
+  unitList.forEach(id => {
+    const unit = unitData.getUnitById(id);
+    const option = document.createElement("option");
+    option.value = id;
+    option.textContent = unit.name;
+    select.appendChild(option);
+  });
+
+  button.onclick = () => {
+    modal.style.display = "none";
+    onConfirm(select.value);
+  };
+
+  modal.style.display = "flex";
+}
 /* ---------- events ---------- */
-cvs.onmousedown = e=>{ 
-  drag=true; 
-  start={x:e.clientX,y:e.clientY}; 
-  selectedPiece = unitPiece.getPieceAt(start.x, start.y);drag = true;
-  dragMoved = false;
-  start = { x: e.clientX, y: e.clientY };
+function bindCanvasEvents() {
+  cvs.onmousedown = e=>{ 
+    drag=true; 
+    start={x:e.clientX,y:e.clientY}; 
+    selectedPiece = unitPiece.getPieceAt(start.x, start.y);drag = true;
+    dragMoved = false;
+    start = { x: e.clientX, y: e.clientY };
 
-  // Check for unit click
-  const r = cvs.getBoundingClientRect();
-  const gx = (e.clientX - r.left - offX) / zoom;
-  const gy = (e.clientY - r.top  - offY) / zoom;
-
-  selectedPiece = getPieceAt(gx, gy);
-};
-cvs.onmousemove = e=>{
-  if (draggedPiece) {
+    // Check for unit click
     const r = cvs.getBoundingClientRect();
     const gx = (e.clientX - r.left - offX) / zoom;
     const gy = (e.clientY - r.top  - offY) / zoom;
 
-    draggedPiece.x = gx - draggedOffset.x;
-    draggedPiece.y = gy - draggedOffset.y;
+    selectedPiece = getPieceAt(gx, gy);
+  };
+  cvs.onmousemove = e=>{
+    if (draggedPiece) {
+      const r = cvs.getBoundingClientRect();
+      const gx = (e.clientX - r.left - offX) / zoom;
+      const gy = (e.clientY - r.top  - offY) / zoom;
 
-    render(); // update visuals
-    return;
-  }
-  /* ---------- if dragging, pan ------------ */
-  if (drag) {
-    const dx = e.clientX - start.x,
-          dy = e.clientY - start.y;
+      draggedPiece.x = gx - draggedOffset.x;
+      draggedPiece.y = gy - draggedOffset.y;
 
-    if (Math.abs(dx) > 3 || Math.abs(dy) > 3) dragMoved = true;
-    offX += dx; offY += dy;
-    start  = { x:e.clientX, y:e.clientY };
-    render();                    // keep map moving
-    return;                      // ⇠ skip hover logic this frame
-  }
+      render(); // update visuals
+      return;
+    }
+    /* ---------- if dragging, pan ------------ */
+    if (drag) {
+      const dx = e.clientX - start.x,
+            dy = e.clientY - start.y;
 
-  /* ---------- not dragging → hover logic -- */
-  const h = pick(e);             // same helper that finds hex under cursor
-  if (h !== hoverHex) {          // changed hex → restart fade
-    hoverHex   = h;
-    labelAlpha = 0;
-  }
-};
-cvs.onmousedown = e=>{
-  drag = true;
-  dragMoved = false;
-  start = { x: e.clientX, y: e.clientY };
+      if (Math.abs(dx) > 3 || Math.abs(dy) > 3) dragMoved = true;
+      offX += dx; offY += dy;
+      start  = { x:e.clientX, y:e.clientY };
+      render();                    // keep map moving
+      return;                      // ⇠ skip hover logic this frame
+    }
 
-  const r = cvs.getBoundingClientRect();
-  const gx = (e.clientX - r.left - offX) / zoom;
-  const gy = (e.clientY - r.top  - offY) / zoom;
+    /* ---------- not dragging → hover logic -- */
+    const h = pick(e);             // same helper that finds hex under cursor
+    if (h !== hoverHex) {          // changed hex → restart fade
+      hoverHex   = h;
+      labelAlpha = 0;
+    }
+  };
+  cvs.onmousedown = e=>{
+    drag = true;
+    dragMoved = false;
+    start = { x: e.clientX, y: e.clientY };
 
-  const piece = unitPiece.getPieceAt(gx, gy);
-  if (piece) {
-    draggedPiece = piece;
-    draggedOffset.x = gx - piece.x;
-    draggedOffset.y = gy - piece.y;
-  }
-};
-cvs.onmouseup = e => {
-  drag = false;
-  if (draggedPiece) {
-    const h = pick(e);
-    if (h) unitPiece.moveUnitTo(draggedPiece.id, h.label);
-    draggedPiece = null;
+    const r = cvs.getBoundingClientRect();
+    const gx = (e.clientX - r.left - offX) / zoom;
+    const gy = (e.clientY - r.top  - offY) / zoom;
+
+    const piece = unitPiece.getPieceAt(gx, gy);
+    if (piece) {
+      draggedPiece = piece;
+      draggedOffset.x = gx - piece.x;
+      draggedOffset.y = gy - piece.y;
+    }
+  };
+  cvs.onmouseup = e => {
+    drag = false;
+    if (draggedPiece) {
+      const h = pick(e);
+      if (h) unitPiece.moveUnitTo(draggedPiece.id, h.label);
+      draggedPiece = null;
+      render();
+      return;
+    } 
+
+    if (!dragMoved && selectedPiece) {
+      const h = pick(e);
+      if (h) {
+        moveUnitTo(selectedPiece.id, h.label);
+      }
+    }
+
+    selectedPiece = null;
     render();
-    return;
-  } 
+  };
+  cvs.onwheel     = e=>{ e.preventDefault(); zoom*=e.deltaY<0?1.1:0.9; render(); };
+  /*
+  cvs.onclick = e=>{
+    if (dragMoved || draggedPiece) return;
 
-  if (!dragMoved && selectedPiece) {
+    const h = pick(e);
+    if (!h) return;
+
+    // example: place new unit
+    const newUnitId = crypto.randomUUID();
+    unitPiece.addUnitPiece({ id: newUnitId, label: h.label, color: "blue", sprite: "gangrel" });
+    render(); 
+  };
+  */
+  cvs.ondblclick = e => {
+    const r = cvs.getBoundingClientRect();
+    const gx = (e.clientX - r.left - offX) / zoom;
+    const gy = (e.clientY - r.top  - offY) / zoom;
+
+    const piece = unitPiece.getPieceAt(gx, gy);
+
+    if (piece) {
+      const unit = unitData.getUnitById(piece.type);
+      if (unit) {
+        const html = `
+          <strong>${unit.name}</strong><br>
+          <em>${unit.archon || ""}</em><br><br>
+          <b>Power:</b> ${unit.power}<br>
+          <b>Toughness:</b> ${unit.toughness}<br>
+          <b>Obscurity:</b> ${unit.obscurity}<br>
+          <b>Max HP:</b> ${unit.maxHealth}<br>
+          <b>Traits:</b> ${unit.traits.join(", ")}<br>
+          <b>Tags:</b> ${unit.tags.join(", ")}<br>
+        `;
+        ui.openModal(`Unit: ${unit.name}`, html);
+        return;
+      } else {
+        ui.openModal("Unit Info", "(Unknown unit)");
+        return;
+      }
+    }
+
     const h = pick(e);
     if (h) {
-      moveUnitTo(selectedPiece.id, h.label);
-    }
-  }
-
-  selectedPiece = null;
-  render();
-};
-cvs.onwheel     = e=>{ e.preventDefault(); zoom*=e.deltaY<0?1.1:0.9; render(); };
-/*
-cvs.onclick = e=>{
-  if (dragMoved || draggedPiece) return;
-
-  const h = pick(e);
-  if (!h) return;
-
-  // example: place new unit
-  const newUnitId = crypto.randomUUID();
-  unitPiece.addUnitPiece({ id: newUnitId, label: h.label, color: "blue", sprite: "gangrel" });
-  render(); 
-};
-*/
-cvs.ondblclick = e => {
-  const r = cvs.getBoundingClientRect();
-  const gx = (e.clientX - r.left - offX) / zoom;
-  const gy = (e.clientY - r.top  - offY) / zoom;
-
-  const piece = unitPiece.getPieceAt(gx, gy);
-  if (piece) {
-    ui.openModal(`Unit ${piece.id}`, "(unit info here)");
-    return;
-  }
-
-  const h = pick(e);
-  if (h) {
-    sel = h.label;
-    render();
-    ui.openModal(`Field ${h.label}`, "(your field data)");
-  }
-};
-
-cvs.oncontextmenu = e => {
-  e.preventDefault();
-
-  const r = cvs.getBoundingClientRect();
-  const gx = (e.clientX - r.left - offX) / zoom;
-  const gy = (e.clientY - r.top - offY) / zoom;
-  const h  = pick(e);
-  const piece = unitPiece.getPieceAt(gx, gy);
-
-  if (!h) return;
-
-  // build menu dynamically
-  contextMenu.innerHTML = "";
-
-  const addItem = (label, action) => {
-    const li = document.createElement("li");
-    li.textContent = label;
-    li.style.padding = "4px 10px";
-    li.style.cursor = "pointer";
-    li.onmouseenter = () => (li.style.background = "#444");
-    li.onmouseleave = () => (li.style.background = "none");
-    li.onclick = () => {
-      contextMenu.style.display = "none";
-      action();
-    };
-    contextMenu.appendChild(li);
-  };
-
-  addItem("Show Modal", () => {
-    if (piece) {
-      ui.openModal(`Unit ${piece.id}`, `(unit info here)`);
-    } else {
+      sel = h.label;
+      render();
       ui.openModal(`Field ${h.label}`, "(your field data)");
     }
-  });
+  };
 
-  if (piece) {
-    addItem("Remove Unit", () => {
-      unitPiece.removeUnit(piece.id);
-      render();
-    });
-  } else {
-    addItem("Add Unit", () => {
-      const id = crypto.randomUUID();
-      const unitType = prompt("Enter unit type (e.g. GangrelWarband):");
-      if (unitType) {
-        unitPiece.addUnitPiece({ id, label: h.label, sprite: unitType });
-        render();
+
+  cvs.oncontextmenu = e => {
+    e.preventDefault();
+
+    const r = cvs.getBoundingClientRect();
+    const gx = (e.clientX - r.left - offX) / zoom;
+    const gy = (e.clientY - r.top - offY) / zoom;
+    const h  = pick(e);
+    const piece = unitPiece.getPieceAt(gx, gy);
+
+    if (!h) return;
+
+    // build menu dynamically
+    contextMenu.innerHTML = "";
+
+    const addItem = (label, action) => {
+      const li = document.createElement("li");
+      li.textContent = label;
+      li.style.padding = "4px 10px";
+      li.style.cursor = "pointer";
+      li.onmouseenter = () => (li.style.background = "#444");
+      li.onmouseleave = () => (li.style.background = "none");
+      li.onclick = () => {
+        contextMenu.style.display = "none";
+        action();
+      };
+      contextMenu.appendChild(li);
+    };
+
+    addItem("Show Modal", () => {
+      if (piece) {
+        ui.openModal(`Unit ${piece.id}`, `(unit info here)`);
+      } else {
+        ui.openModal(`Field ${h.label}`, "(your field data)");
       }
     });
+
+    if (piece) {
+      addItem("Remove Unit", () => {
+        unitPiece.removeUnit(piece.id);
+        render();
+      });
+    } else {
+      addItem("Add Unit", () => {
+        showUnitSelector((chosenUnitId) => {
+          const unit = unitData.getUnitById(chosenUnitId);
+          if (!unit) return;
+
+          unitPiece.addUnitPiece({
+            id: crypto.randomUUID(),     // unique instance
+            label: h.label,              // hex
+            type: unit.id,               // the type from units.json
+            color: "red"                 // optional styling
+          });
+
+          render();
+        });
+      });
+    }
+    contextMenu.style.left = `${e.pageX}px`;
+    contextMenu.style.top  = `${e.pageY}px`;
+    contextMenu.style.display = "block";
+  };
+}
+window.addEventListener("click", (e) => {
+  const menu = document.getElementById("contextMenu");
+  if (!menu.contains(e.target)) {
+    menu.style.display = "none";
   }
-
-  contextMenu.style.left = `${e.pageX}px`;
-  contextMenu.style.top  = `${e.pageY}px`;
-  contextMenu.style.display = "block";
-};
-
+});
 /* ---------- keyboard shortcuts ---------- */
 window.onkeydown = (e) => {
   if (e.key === "Delete" && selectedPiece) {
@@ -289,12 +350,20 @@ window.onkeydown = (e) => {
   }
 };
 window.onresize = ()=>{ cvs.width=innerWidth; cvs.height=innerHeight; render(); };
-img.onload      = ()=>{ 
-  build();
-  unitPiece.addUnitPiece({ id: "unit1", label: "D05", color: "purple" }); 
-  render(); 
-  initUI(); 
-};
+
+async function init() {
+  // Load unit data and sprites
+  await unitData.loadUnitData().then(() => {
+    unitPiece.loadUnitSpritesFromUnitData(unitData.getAllUnits());
+
+    build();
+    render();
+    initUI();
+
+    bindCanvasEvents(); 
+  });        
+}
+init().catch(console.error);
 
 /* Start the animation loop */
 requestAnimationFrame(tick);
@@ -302,15 +371,22 @@ requestAnimationFrame(tick);
 // Export hexes for unitPiece module to use
 export { hexes };
 
-// Save and Load buttons functionality
-document.getElementById("save").onclick = () => {
-  const data = unitPiece.exportMapState();
-  navigator.clipboard.writeText(data);
-  alert("Map state copied to clipboard!");
-};
-document.getElementById("load").onclick = () => {
-  const input = prompt("Paste map state JSON:");
-  if (input) unitPiece.importMapState(input);
-  render();
+// Save
+document.getElementById("save").onclick = async () => {
+  const name = prompt("Enter save name:");
+  if (!name) return;
+
+  const data = JSON.parse(unitPiece.exportMapState());
+  await supabaseService.saveGameState(name, data);
+  alert("Saved!");
 };
 
+// Load
+document.getElementById("load").onclick = async () => {
+  const name = prompt("Enter name to load:");
+  if (!name) return;
+
+  const json = await supabaseService.loadGameState(name);
+  unitPiece.importMapState(JSON.stringify(json));
+  render();
+};
