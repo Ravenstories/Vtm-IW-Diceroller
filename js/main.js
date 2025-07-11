@@ -7,9 +7,9 @@
 /* ----------------------------------
    Imports & constants
 ---------------------------------- */
-import units   from "../data/units.json"   with { type: "json" };
 import terrain from "../data/terrain.json" with { type: "json" };
 import traits  from "../data/traits.json"  with { type: "json" };
+import {getHumanUnits, getVampireUnits, loadUnitData} from "./services/unitDataService.js";
 
 import { getTraitModifiers } from "./services/traitService.js";
 import { logBattleResult }  from "./services/logger.js";
@@ -31,13 +31,6 @@ function saveRoster () {
   localStorage.setItem(LS_KEY_ROSTER, JSON.stringify(activeUnits));
 }
 
-function loadRoster () {
-  try {
-    const data = JSON.parse(localStorage.getItem(LS_KEY_ROSTER) || "");
-    if (data?.vampires && data?.humans) activeUnits = data;
-  } catch { /* ignore parse errors */ }
-}
-
 export function saveBattleLog (html) {
   localStorage.setItem(LS_KEY_LOG, html);
 }
@@ -51,6 +44,21 @@ function restoreBattleLog () {
 /* ----------------------------------
    Local state
 ---------------------------------- */
+// Units
+let units = {
+  vampires: [],
+  humans: [],
+  allUnits: []
+};
+// Load unit data
+loadUnitData().then(() => {
+  units.vampires = getVampireUnits();
+  units.humans   = getHumanUnits();
+  units.allUnits = [...units.vampires, ...units.humans];
+}).catch(err => {
+  console.error("Failed to load unit data:", err);
+});
+// Active units
 let activeUnits = {
   vampires: [],
   humans:   []
@@ -248,10 +256,14 @@ function resolveBattle (s) {
    Boot‑strap
 ---------------------------------- */
 document.addEventListener("DOMContentLoaded", () => {
-  loadRoster();          
   populateTraitList();
-  populateSelect("vampiresSelect", units);
-  populateSelect("humansSelect",   units);
+  loadUnitData().then(() => {
+    console.log("Unit data loaded successfully.");
+    populateSelect("vampiresSelect", getVampireUnits());
+    populateSelect("humansSelect",   getHumanUnits());
+  }).catch(err => {
+    console.error("Failed to load unit data:", err);
+  });
   populateTerrainSelect();
   renderRosters();
   restoreBattleLog();   

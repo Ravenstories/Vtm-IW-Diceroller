@@ -139,6 +139,24 @@ function showUnitSelector(onConfirm) {
 
   modal.style.display = "flex";
 }
+function showUnitModal(piece) {
+  const unit = unitData.getUnitById(piece?.type);
+  if (unit) {
+    const html = `
+      <strong>${unit.name}</strong><br>
+      <em>${unit.archon || ""}</em><br><br>
+      <b>Power:</b> ${unit.power}<br>
+      <b>Toughness:</b> ${unit.toughness}<br>
+      <b>Obscurity:</b> ${unit.obscurity}<br>
+      <b>Max HP:</b> ${unit.maxHealth}<br>
+      <b>Traits:</b> ${unit.traits.join(", ")}<br>
+      <b>Tags:</b> ${unit.tags.join(", ")}<br>
+    `;
+    ui.openModal(`Unit: ${unit.name}`, html);
+  } else {
+    ui.openModal("Unit Info", "(Unknown unit)");
+  }
+}
 /* ---------- events ---------- */
 function bindCanvasEvents() {
   cvs.onmousedown = e=>{ 
@@ -244,24 +262,8 @@ function bindCanvasEvents() {
     const piece = unitPiece.getPieceAt(gx, gy);
 
     if (piece) {
-      const unit = unitData.getUnitById(piece.type);
-      if (unit) {
-        const html = `
-          <strong>${unit.name}</strong><br>
-          <em>${unit.archon || ""}</em><br><br>
-          <b>Power:</b> ${unit.power}<br>
-          <b>Toughness:</b> ${unit.toughness}<br>
-          <b>Obscurity:</b> ${unit.obscurity}<br>
-          <b>Max HP:</b> ${unit.maxHealth}<br>
-          <b>Traits:</b> ${unit.traits.join(", ")}<br>
-          <b>Tags:</b> ${unit.tags.join(", ")}<br>
-        `;
-        ui.openModal(`Unit: ${unit.name}`, html);
-        return;
-      } else {
-        ui.openModal("Unit Info", "(Unknown unit)");
-        return;
-      }
+      showUnitModal(piece);
+      return;
     }
 
     const h = pick(e);
@@ -303,7 +305,7 @@ function bindCanvasEvents() {
 
     addItem("Show Modal", () => {
       if (piece) {
-        ui.openModal(`Unit ${piece.id}`, `(unit info here)`);
+        showUnitModal(piece);
       } else {
         ui.openModal(`Field ${h.label}`, "(your field data)");
       }

@@ -9,7 +9,7 @@
     "obscurity": 1,
     "traits": ["Protean"],
     "maxHealth": 4,
-    "tags": ["Vampire"]
+    "tags": ["vampire", "undead"]
   },
   {
     "id": "vampire-beast-pack",
@@ -21,7 +21,7 @@
     "obscurity": 3,
     "traits": ["Animal", "Self-sustaining"],
     "maxHealth": 3,
-    "tags": ["Animal"]
+    "tags": ["animal", "undead"]
   },
   {
     "id": "vampire-ravnos-troublemakers",
@@ -33,7 +33,7 @@
     "obscurity": 2,
     "traits": ["Sabotage", "Scout"],
     "maxHealth": 2,
-    "tags": ["Vampire"]
+    "tags": ["vampire", "undead"]
   },
   {
     "id": "vampire-tremere-magisters",
@@ -45,7 +45,7 @@
     "obscurity": 2,
     "traits": ["Seer Ritual"],
     "maxHealth": 2,
-    "tags": ["Vampire"]
+    "tags": ["vampire", "undead"]
   },
   {
     "id": "vampire-gargoyle-guardian",
@@ -57,7 +57,7 @@
     "obscurity": 0,
     "traits": ["Stone Sentinel", "Self-sustaining"],
     "maxHealth": 4,
-    "tags": ["Gargoyle"]
+    "tags": ["gargoyle", "undead"]
   },
   {
     "id": "vampire-assimite-mercenaries",
@@ -69,7 +69,7 @@
     "obscurity": 5,
     "traits": ["Blood Money"],
     "maxHealth": 4,
-    "tags": ["Vampire"]
+    "tags": ["vampire", "undead"]
   },
   {
     "id": "vampire-toreador-agents",
@@ -81,7 +81,7 @@
     "obscurity": 2,
     "traits": ["Social Chameleons", "Cover Story", "Herd"],
     "maxHealth": 3,
-    "tags": ["Vampire"]
+    "tags": ["vampire", "undead"]
   },
   {
     "id": "vampire-malkavian-seers",
@@ -93,7 +93,7 @@
     "obscurity": 3,
     "traits": ["Premonition", "Scout"],
     "maxHealth": 2,
-    "tags": ["Vampire"]
+    "tags": ["vampire", "undead"]
   },
   {
     "id": "vampire-salubri-healers",
@@ -105,7 +105,7 @@
     "obscurity": 4,
     "traits": ["Red Salve"],
     "maxHealth": 2,
-    "tags": ["Vampire"]
+    "tags": ["vampire", "undead"]
   },
   {
     "id": "vampire-ventrue-knights",
@@ -117,7 +117,7 @@
     "obscurity": 3,
     "traits": ["Command Authority"],
     "maxHealth": 4,
-    "tags": ["Vampire"]
+    "tags": ["vampire", "undead"]
   },
   {
     "id": "vampire-brujah-guardians",
@@ -129,7 +129,7 @@
     "obscurity": 2,
     "traits": ["Iron Will"],
     "maxHealth": 4,
-    "tags": ["Vampire"]
+    "tags": ["vampire", "undead"]
   },
   {
     "id": "vampire-nosferatu-spies",
@@ -141,7 +141,7 @@
     "obscurity": 3,
     "traits": ["Obfuscate"],
     "maxHealth": 4,
-    "tags": ["Vampire"]
+    "tags": ["vampire", "undead"]
   },
   {
     "id": "human-peasant-mob",
@@ -218,6 +218,6 @@
     "revelation": 0,
     "traits": ["Feral"],
     "maxHealth": 5,
-    "tags": ["werewolf"]
+    "tags": ["human", "werewolf"]
   }
 ]
