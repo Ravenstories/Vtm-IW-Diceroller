@@ -250,8 +250,8 @@ function resolveBattle (s) {
 document.addEventListener("DOMContentLoaded", () => {
   loadRoster();          
   populateTraitList();
-  populateSelect("vampiresSelect", units.vampires);
-  populateSelect("humansSelect",   units.humans);
+  populateSelect("vampiresSelect", units);
+  populateSelect("humansSelect",   units);
   populateTerrainSelect();
   renderRosters();
   restoreBattleLog();   
