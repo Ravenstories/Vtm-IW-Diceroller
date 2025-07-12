@@ -157,8 +157,95 @@ function showUnitModal(piece) {
     ui.openModal("Unit Info", "(Unknown unit)");
   }
 }
+function getTouchDistance(touches) {
+  const dx = touches[0].clientX - touches[1].clientX;
+  const dy = touches[0].clientY - touches[1].clientY;
+  return Math.hypot(dx, dy);
+}
+
+function getTouchMidpoint(touches) {
+  return {
+    x: (touches[0].clientX + touches[1].clientX) / 2,
+    y: (touches[0].clientY + touches[1].clientY) / 2,
+  };
+}
+
 /* ---------- events ---------- */
 function bindCanvasEvents() {
+  let touchStartDist = null;
+  let lastTouchMid = null;
+
+  cvs.addEventListener("touchstart", (e) => {
+    if (e.touches.length === 1) {
+      // Single finger → treat as drag start
+      drag = true;
+      const t = e.touches[0];
+      start = { x: t.clientX, y: t.clientY };
+      dragMoved = false;
+    } else if (e.touches.length === 2) {
+      // Two fingers → pinch start
+      touchStartDist = getTouchDistance(e.touches);
+      lastTouchMid = getTouchMidpoint(e.touches);
+    }
+  });
+
+  cvs.addEventListener("touchmove", (e) => {
+    e.preventDefault(); // prevent scrolling
+
+    if (e.touches.length === 1 && drag) {
+      const t = e.touches[0];
+      const dx = t.clientX - start.x;
+      const dy = t.clientY - start.y;
+
+      if (Math.abs(dx) > 3 || Math.abs(dy) > 3) dragMoved = true;
+      offX += dx;
+      offY += dy;
+      start = { x: t.clientX, y: t.clientY };
+      render();
+    } else if (e.touches.length === 2) {
+      // Handle pinch zoom
+      const dist = getTouchDistance(e.touches);
+      const mid = getTouchMidpoint(e.touches);
+      if (touchStartDist) {
+        const scale = dist / touchStartDist;
+        zoom *= scale;
+
+        // Optional: zoom around midpoint
+        const dx = mid.x - cvs.width / 2;
+        const dy = mid.y - cvs.height / 2;
+        offX -= dx * (scale - 1);
+        offY -= dy * (scale - 1);
+
+        render();
+      }
+      touchStartDist = dist;
+    }
+  });
+
+  cvs.addEventListener("touchend", (e) => {
+    drag = false;
+    touchStartDist = null;
+
+    if (!dragMoved && e.touches.length === 0) {
+      const t = e.changedTouches[0];
+      const r = cvs.getBoundingClientRect();
+      const gx = (t.clientX - r.left - offX) / zoom;
+      const gy = (t.clientY - r.top  - offY) / zoom;
+
+      const piece = unitPiece.getPieceAt(gx, gy);
+      if (piece) {
+        showUnitModal(piece);
+      } else {
+        const h = pick({ clientX: t.clientX, clientY: t.clientY });
+        if (h) {
+          sel = h.label;
+          render();
+          ui.openModal(`Field ${h.label}`, "(your field data)");
+        }
+      }
+    }
+  });
+
   cvs.onmousedown = e=>{ 
     drag=true; 
     start={x:e.clientX,y:e.clientY}; 
