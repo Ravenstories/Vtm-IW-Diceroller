@@ -169,6 +169,13 @@ function getTouchMidpoint(touches) {
     y: (touches[0].clientY + touches[1].clientY) / 2,
   };
 }
+function getCanvasCoords(touchEvent) {
+  const r = cvs.getBoundingClientRect();
+  const t = touchEvent.changedTouches[0];
+  const gx = (t.clientX - r.left - offX) / zoom;
+  const gy = (t.clientY - r.top  - offY) / zoom;
+  return { gx, gy, clientX: t.clientX, clientY: t.clientY };
+}
 
 /* ---------- events ---------- */
 function bindCanvasEvents() {
@@ -221,23 +228,21 @@ cvs.addEventListener("touchend", (e) => {
 
   if (longPressTriggered) return;
 
-  const r = cvs.getBoundingClientRect();
-  const t = e.changedTouches[0];
-  const gx = (t.clientX - r.left - offX) / zoom;
-  const gy = (t.clientY - r.top  - offY) / zoom;
-
+  const { gx, gy, clientX, clientY } = getCanvasCoords(e);
   const piece = unitPiece.getPieceAt(gx, gy);
-  const hex   = pick({ clientX: t.clientX, clientY: t.clientY });
+  const hex   = pick({ clientX, clientY });
 
-  // 1. Tap on unit (select it)
+  console.log("👉 touchend gx/gy:", gx, gy);
+  console.log("🔍 picked piece:", piece);
+  console.log("📍 picked hex:", hex);
+
   if (!selectedUnitForMove && piece) {
     selectedUnitForMove = piece;
-    ui.showTip(`Selected ${piece.type}`, t.clientX, t.clientY);
+    ui.showTip(`Selected ${piece.type}`, clientX, clientY);
     setTimeout(() => ui.hideTip(), 1000);
     return;
   }
 
-  // 2. Tap on hex (if a unit is selected)
   if (selectedUnitForMove && hex) {
     unitPiece.moveUnitTo(selectedUnitForMove.id, hex.label);
     selectedUnitForMove = null;
@@ -245,7 +250,6 @@ cvs.addEventListener("touchend", (e) => {
     return;
   }
 
-  // 3. Tap on empty space (cancel selection)
   selectedUnitForMove = null;
   ui.hideTip();
 });
