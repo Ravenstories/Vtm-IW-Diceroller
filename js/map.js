@@ -172,79 +172,55 @@ function getTouchMidpoint(touches) {
 
 /* ---------- events ---------- */
 function bindCanvasEvents() {
-  let touchStartDist = null;
-  let lastTouchMid = null;
+  let longPressTimer = null;
+let longPressPos = null;
+let longPressTriggered = false;
 
-  cvs.addEventListener("touchstart", (e) => {
-    if (e.touches.length === 1) {
-      // Single finger → treat as drag start
-      drag = true;
-      const t = e.touches[0];
-      start = { x: t.clientX, y: t.clientY };
-      dragMoved = false;
-    } else if (e.touches.length === 2) {
-      // Two fingers → pinch start
-      touchStartDist = getTouchDistance(e.touches);
-      lastTouchMid = getTouchMidpoint(e.touches);
-    }
-  });
+cvs.addEventListener("touchstart", (e) => {
+  if (e.touches.length !== 1) return;
 
-  cvs.addEventListener("touchmove", (e) => {
-    e.preventDefault(); // prevent scrolling
+  const t = e.touches[0];
+  drag = true;
+  dragMoved = false;
+  start = { x: t.clientX, y: t.clientY };
+  longPressPos = { x: t.clientX, y: t.clientY };
+  longPressTriggered = false;
 
-    if (e.touches.length === 1 && drag) {
-      const t = e.touches[0];
-      const dx = t.clientX - start.x;
-      const dy = t.clientY - start.y;
+  longPressTimer = setTimeout(() => {
+    longPressTriggered = true;
+    showContextMenuAt(longPressPos.x, longPressPos.y);
+    longPressTimer = null;
+  }, 600);
+});
 
-      if (Math.abs(dx) > 3 || Math.abs(dy) > 3) dragMoved = true;
-      offX += dx;
-      offY += dy;
-      start = { x: t.clientX, y: t.clientY };
-      render();
-    } else if (e.touches.length === 2) {
-      // Handle pinch zoom
-      const dist = getTouchDistance(e.touches);
-      const mid = getTouchMidpoint(e.touches);
-      if (touchStartDist) {
-        const scale = dist / touchStartDist;
-        zoom *= scale;
+cvs.addEventListener("touchmove", (e) => {
+  if (!drag) return;
 
-        // Optional: zoom around midpoint
-        const dx = mid.x - cvs.width / 2;
-        const dy = mid.y - cvs.height / 2;
-        offX -= dx * (scale - 1);
-        offY -= dy * (scale - 1);
+  const t = e.touches[0];
+  const dx = t.clientX - start.x;
+  const dy = t.clientY - start.y;
 
-        render();
-      }
-      touchStartDist = dist;
-    }
-  });
+  if (Math.abs(dx) > 3 || Math.abs(dy) > 3) {
+    dragMoved = true;
+    clearTimeout(longPressTimer);
+    longPressTimer = null;
+  }
 
-  cvs.addEventListener("touchend", (e) => {
-    drag = false;
-    touchStartDist = null;
+  offX += dx;
+  offY += dy;
+  start = { x: t.clientX, y: t.clientY };
+  render();
+});
 
-    if (!dragMoved && e.touches.length === 0) {
-      const t = e.changedTouches[0];
-      const r = cvs.getBoundingClientRect();
-      const gx = (t.clientX - r.left - offX) / zoom;
-      const gy = (t.clientY - r.top  - offY) / zoom;
+cvs.addEventListener("touchend", (e) => {
+  drag = false;
+  clearTimeout(longPressTimer);
+  longPressTimer = null;
 
-      const piece = unitPiece.getPieceAt(gx, gy);
-      if (piece) {
-        showUnitModal(piece);
-      } else {
-        const h = pick({ clientX: t.clientX, clientY: t.clientY });
-        if (h) {
-          sel = h.label;
-          render();
-          ui.openModal(`Field ${h.label}`, "(your field data)");
-        }
-      }
-    }
-  });
+  if (longPressTriggered) return; // ⛔ suppress regular tap
+
+  // Double tap or custom interaction, handle here.
+});
 
   cvs.onmousedown = e=>{ 
     drag=true; 
