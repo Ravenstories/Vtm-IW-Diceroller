@@ -217,18 +217,21 @@ cvs.addEventListener("touchend", (e) => {
   clearTimeout(longPressTimer);
   longPressTimer = null;
 
-  if (longPressTriggered) return; // already handled
+  if (longPressTriggered) return;
 
   const r = cvs.getBoundingClientRect();
   const t = e.changedTouches[0];
   const gx = (t.clientX - r.left - offX) / zoom;
-  const gy = (t.clientY - r.top - offY) / zoom;
+  const gy = (t.clientY - r.top  - offY) / zoom;
 
+  // FIRST: try to get the unit at touch point
   const piece = unitPiece.getPieceAt(gx, gy);
+
+  // THEN: try to get the hex at touch point (if no unit or we’re moving)
   const hex   = pick({ clientX: t.clientX, clientY: t.clientY });
 
   if (piece) {
-    // Step 1: select a unit
+    // STEP 1: select the unit for movement
     selectedUnitForMove = piece;
     ui.showTip(`Selected ${piece.type}`, t.clientX, t.clientY);
     setTimeout(() => ui.hideTip(), 1000);
@@ -236,16 +239,16 @@ cvs.addEventListener("touchend", (e) => {
   }
 
   if (selectedUnitForMove && hex) {
-    // Step 2: move selected unit to new hex
+    // STEP 2: move to new hex
     unitPiece.moveUnitTo(selectedUnitForMove.id, hex.label);
     selectedUnitForMove = null;
     render();
     return;
   }
 
+  // fallback (tap on empty space)
   selectedUnitForMove = null;
 });
-
 
   cvs.onmousedown = e=>{ 
     drag=true; 
