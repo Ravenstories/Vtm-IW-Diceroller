@@ -217,10 +217,35 @@ cvs.addEventListener("touchend", (e) => {
   clearTimeout(longPressTimer);
   longPressTimer = null;
 
-  if (longPressTriggered) return; // ⛔ suppress regular tap
+  if (longPressTriggered) return; // already handled
 
-  // Double tap or custom interaction, handle here.
+  const r = cvs.getBoundingClientRect();
+  const t = e.changedTouches[0];
+  const gx = (t.clientX - r.left - offX) / zoom;
+  const gy = (t.clientY - r.top - offY) / zoom;
+
+  const piece = unitPiece.getPieceAt(gx, gy);
+  const hex   = pick({ clientX: t.clientX, clientY: t.clientY });
+
+  if (piece) {
+    // Step 1: select a unit
+    selectedUnitForMove = piece;
+    ui.showTip(`Selected ${piece.type}`, t.clientX, t.clientY);
+    setTimeout(() => ui.hideTip(), 1000);
+    return;
+  }
+
+  if (selectedUnitForMove && hex) {
+    // Step 2: move selected unit to new hex
+    unitPiece.moveUnitTo(selectedUnitForMove.id, hex.label);
+    selectedUnitForMove = null;
+    render();
+    return;
+  }
+
+  selectedUnitForMove = null;
 });
+
 
   cvs.onmousedown = e=>{ 
     drag=true; 
